@@ -1,0 +1,195 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id                String    @id @default(uuid())
+  email             String    @unique
+  password          String?   // Hashed - Nullable para agentes sin activar
+  fullName          String    @map("full_name")
+  phone             String?
+  role              UserRole  @default(CLIENT)
+  isActive          Boolean   @default(true) @map("is_active")
+  
+  // Activación de cuenta (para agentes)
+  activationToken   String?   @unique @map("activation_token")
+  tokenExpiry       DateTime? @map("token_expiry")
+  isActivated       Boolean   @default(false) @map("is_activated")
+  
+  // Account lockout
+  failedLoginAttempts Int      @default(0) @map("failed_login_attempts")
+  lockedUntil         DateTime? @map("locked_until")
+  
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+
+  // Relaciones
+  quotationsAsClient   Quotation[] @relation("ClientQuotations")
+  quotationsCreated    Quotation[] @relation("AgentQuotations")
+  leadsContacted       QuoteLead[] @relation("LeadContactedBy")
+
+  @@map("users")
+}
+
+model Quotation {
+  id               String   @id @default(uuid())
+  clientId         String?  @map("client_id") // Usuario cliente (puede ser null para cotizaciones sin registro)
+  createdById      String   @map("created_by_id") // Agente que creó la cotización
+  clientName       String   @map("client_name")
+  clientEmail      String?  @map("client_email")
+  clientPhone      String?  @map("client_phone")
+  destination      String?
+  travelDateFrom   DateTime? @map("travel_date_from")
+  travelDateTo     DateTime? @map("travel_date_to")
+  globalMaxAmount  String   @map("global_max_amount")
+  validityTerritory String? @map("validity_territory")
+  consecutiveDays  String?  @map("consecutive_days")
+  coverages        Json     // Array de coberturas extraídas
+  status           QuotationStatus @default(DRAFT)
+  notes            String?  @db.Text
+  pdfUrl           String?  @map("pdf_url")
+  originalPdfUrl   String?  @map("original_pdf_url") // PDF de Assist Card subido
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  // Relaciones
+  client           User?    @relation("ClientQuotations", fields: [clientId], references: [id], onDelete: SetNull)
+  createdBy        User     @relation("AgentQuotations", fields: [createdById], references: [id], onDelete: Restrict)
+
+  @@index([clientId])
+  @@index([createdById])
+  @@map("quotations")
+}
+
+model CompanySettings {
+  id              String   @id @default(uuid())
+  companyName     String   @map("company_name")
+  legalId         String?  @map("legal_id") // Cédula jurídica
+  logoUrl         String?  @map("logo_url") // Logo principal
+  faviconUrl      String?  @map("favicon_url") // Favicon dinámico
+  signatureUrl    String?  @map("signature_url") // Firma digital (emails, cotizaciones, PDFs)
+  pageHeroes      Json     @default("{}") @map("page_heroes") // Config por pagina: { "additional-services": { imageUrl, title, subtitle, ctaText, ctaUrl } }
+  website         String?
+  email           String?
+  
+  // Teléfonos por país (JSON array)
+  phoneNumbers    Json     @default("[]") @map("phone_numbers") // [{ country: "Costa Rica", phone: "+506...", whatsapp: "+506..." }]
+  
+  // Redes sociales (JSON)
+  socialMedia     Json     @default("{}") @map("social_media") // { facebook: "url", instagram: "url", linkedin: "url" }
+
+  // Documentos legales por tenant (MVP)
+  legalDocs       Json     @default("[]") @map("legal_docs") // [{ id, type, title, slug, contentHtml, version, status, effectiveAt, publishedAt, updatedBy, updatedAt }]
+  
+  // Datos adicionales (no mostrar en interfaz por ahora)
+  businessAddress String?  @db.Text @map("business_address")
+  legalRepName    String?  @map("legal_rep_name") // Representante legal (guardar para futuro)
+  legalRepId      String?  @map("legal_rep_id") // Cédula del representante (guardar para futuro)
+  
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@map("company_settings")
+}
+
+enum UserRole {
+  ADMIN
+  AGENT
+  CLIENT
+}
+
+enum QuotationStatus {
+  DRAFT
+  SENT
+  ACCEPTED
+  REJECTED
+}
+
+enum QuoteLeadStatus {
+  NEW
+  CONTACTED
+  CONVERTED
+  DISCARDED
+}
+model AdditionalService {
+  id                String   @id @default(uuid())
+  name              String   // Nombre del servicio (ej: "Equipaje Protegido Plus")
+  slug              String   @unique // URL-friendly (ej: "equipaje-protegido-plus")
+  category          String   // Categoría (ej: "equipaje", "salud", "deportes", "embarazo")
+  
+  // Descripción
+  shortDescription  String   @db.Text @map("short_description") // Para tarjeta
+  fullDescription   String?  @db.Text @map("full_description") // Detalle completo
+  
+  // Precios y coberturas
+  basePrice         Float    @map("base_price") // Precio base "desde USD X"
+  pricingType       String   @default("per_trip") @map("pricing_type") // "per_trip", "per_day", "per_person"
+  coverageLevels    Json     @default("[]") @map("coverage_levels") // Array de niveles de cobertura
+  
+  // Imágenes
+  iconUrl           String?  @map("icon_url") // Icono pequeño para tarjeta
+  imageUrl          String?  @map("image_url") // Imagen grande para detalle
+  
+  // Control
+  isActive          Boolean  @default(true) @map("is_active")
+  displayOrder      Int      @default(0) @map("display_order") // Orden de visualización
+  
+  // Features destacados (JSON array)
+  features          Json     @default("[]") // ["Feature 1", "Feature 2"]
+  
+  // Metadata
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  @@index([category])
+  @@index([isActive])
+  @@index([displayOrder])
+  @@map("additional_services")
+}
+model QuoteLead {
+  id                String   @id @default(uuid())
+  
+  // Información del viaje
+  destination       String?
+  startDate         String?  @map("start_date") // Stored as string from form
+  endDate           String?  @map("end_date")
+  totalTravelers    Int      @default(1) @map("total_travelers")
+  passengerAges     String?  @map("passenger_ages") // Comma-separated ages
+  
+  // Información de contacto
+  wantsEmailQuote   Boolean  @default(false) @map("wants_email_quote")
+  email             String?
+  
+  // Metadata de captura
+  sourceUrl         String?  @db.Text @map("source_url")
+  detectedCountry   String?  @map("detected_country")
+  routedPhone       String?  @map("routed_phone")
+  ip                String?
+  userAgent         String?  @db.Text @map("user_agent")
+  
+  // Estado y seguimiento
+  status            QuoteLeadStatus @default(NEW)
+  notes             String?  @db.Text
+  contactedAt       DateTime? @map("contacted_at")
+  contactedById     String?  @map("contacted_by_id")
+  
+  // Timestamps
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+  
+  // Relaciones
+  contactedBy       User?    @relation("LeadContactedBy", fields: [contactedById], references: [id], onDelete: SetNull)
+  
+  @@index([status])
+  @@index([createdAt])
+  @@index([email])
+  @@index([contactedById])
+  @@map("quote_leads")
+}

@@ -1,0 +1,82 @@
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
+import { UpdateSettingsDto } from './dto';
+
+export interface PhoneNumber {
+  country: string;
+  phone: string;
+}
+
+export interface SocialMedia {
+  facebook?: string;
+  instagram?: string;
+  twitter?: string;
+  linkedin?: string;
+  whatsapp?: string;
+}
+
+@Injectable()
+export class SettingsService {
+  constructor(private prisma: PrismaService) {}
+
+export interface UpdateSettingsDto {
+  companyName?: string;
+  legalId?: string;
+  logoUrl?: string;
+  signatureUrl?: string;
+  website?: string;
+  email?: string;
+  phoneNumbers?: PhoneNumber[];
+  socialMedia?: SocialMedia;
+  businessAddress?: string;
+  legalRepName?: string;
+  legalRepId?: string;
+}
+
+@Injectable()
+export class SettingsService {
+  constructor(private prisma: PrismaService) {}
+
+  async getSettings() {
+    // Siempre debe haber un solo registro de settings
+    let settings = await this.prisma.companySettings.findFirst();
+    
+    if (!settings) {
+      // Crear settings por defecto si no existe
+      settings = await this.prisma.companySettings.create({
+        data: {
+          companyName: 'BarmenTech Seguros',
+          phoneNumbers: [],
+          socialMedia: {},
+        },
+      });
+    }
+    
+    return settings;
+  }
+
+  async updateSettings(data: UpdateSettingsDto) {
+    const existing = await this.getSettings();
+    
+    // Convertir tipos correctamente para Prisma
+    const updateData: any = { ...data };
+    if (data.phoneNumbers) {
+      updateData.phoneNumbers = data.phoneNumbers as any;
+    }
+    if (data.socialMedia) {
+      updateData.socialMedia = data.socialMedia as any;
+    }
+    
+    return this.prisma.companySettings.update({
+      where: { id: existing.id },
+      data: updateData,
+    });
+  }
+
+  // Helper para obtener un teléfono específico por país
+  async getPhoneByCountry(country: string): Promise<PhoneNumber | null> {
+    const settings = await this.getSettings();
+    const phones = (settings.phoneNumbers as any) as PhoneNumber[];
+    return phones.find(p => p.country.toLowerCase() === country.toLowerCase()) || null;
+  }
+}

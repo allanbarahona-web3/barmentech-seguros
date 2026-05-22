@@ -1,0 +1,2 @@
+-- Backfill migration folder was empty. Keep this migration idempotent.
+ALTER TABLE "company_settings" ADD COLUMN IF NOT EXISTS "favicon_url" TEXT;

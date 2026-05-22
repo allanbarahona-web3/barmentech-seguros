@@ -1,0 +1,17 @@
+# Global repository policy
+
+# Env files: ignore all, allow template only
+.env
+.env.*
+
+# Markdown docs: only README.md can be committed
+*.md
+!README.md
+
+# Common ignores
+node_modules/
+.next/
+dist/
+build/
+out/
+*.log

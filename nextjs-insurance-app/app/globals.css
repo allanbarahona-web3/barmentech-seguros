@@ -1,0 +1,150 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-sans text-neutral-900 bg-background antialiased;
+  }
+  
+  .font-manrope {
+    font-family: 'Manrope', sans-serif;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
+  }
+}
+
+@layer utilities {
+  .premium-shadow {
+    box-shadow: 0 4px 20px rgba(0, 35, 75, 0.05);
+  }
+  
+  .premium-shadow-hover:hover {
+    box-shadow: 0 12px 40px rgba(0, 35, 75, 0.1);
+  }
+  
+  .chat-shadow {
+    box-shadow: 0 12px 40px rgba(0, 35, 75, 0.08);
+  }
+  
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+
+  .quote-widget-highlight {
+    animation: highlightPulse 2.5s ease-in-out;
+  }
+
+  @keyframes highlightPulse {
+    0% {
+      transform: scale(1);
+    }
+    10% {
+      transform: scale(1.02);
+    }
+    20% {
+      transform: scale(1);
+    }
+    30% {
+      transform: scale(1.02);
+    }
+    40%, 100% {
+      transform: scale(1);
+    }
+  }
+
+  /* Quote Modal Animations */
+  .quote-modal-pulse-icon {
+    animation: iconPulse 2s ease-in-out infinite;
+  }
+
+  @keyframes iconPulse {
+    0%, 100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.8;
+      transform: scale(1.1);
+    }
+  }
+
+  .quote-modal-ages-shake {
+    animation: fieldShake 0.6s ease-in-out;
+  }
+
+  @keyframes fieldShake {
+    0%, 100% {
+      transform: translateX(0);
+    }
+    10%, 30%, 50%, 70%, 90% {
+      transform: translateX(-4px);
+    }
+    20%, 40%, 60%, 80% {
+      transform: translateX(4px);
+    }
+  }
+}
+
+@layer components {
+  .legal-shell {
+    @apply pt-28 pb-16 px-6 md:px-10;
+  }
+
+  .legal-card {
+    @apply max-w-4xl mx-auto bg-white border border-slate-200 rounded-2xl shadow-sm p-6 md:p-10;
+  }
+
+  .legal-content {
+    @apply text-slate-800 text-base leading-8;
+  }
+
+  .legal-content h1,
+  .legal-content h2,
+  .legal-content h3 {
+    @apply text-slate-900 font-bold tracking-tight mt-8 mb-4;
+  }
+
+  .legal-content h1 {
+    @apply text-3xl;
+  }
+
+  .legal-content h2 {
+    @apply text-2xl;
+  }
+
+  .legal-content h3 {
+    @apply text-xl;
+  }
+
+  .legal-content p {
+    @apply my-3;
+  }
+
+  .legal-content ul,
+  .legal-content ol {
+    @apply my-4 pl-6;
+  }
+
+  .legal-content ul {
+    @apply list-disc;
+  }
+
+  .legal-content ol {
+    @apply list-decimal;
+  }
+
+  .legal-content li {
+    @apply my-1;
+  }
+
+  .legal-content strong {
+    @apply font-bold text-slate-900;
+  }
+
+  .legal-content .legal-anchor {
+    scroll-margin-top: 7.5rem;
+  }
+}
