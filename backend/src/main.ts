@@ -6,6 +6,33 @@ import { join } from 'path';
 import helmet from 'helmet';
 import * as express from 'express';
 
+function parseAllowedOriginsFromEnv(): string[] {
+  const rawOrigins = process.env.CORS_ORIGINS ?? '';
+  const fromCorsOrigins = rawOrigins
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+
+  const defaultLocalOrigins = [
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'http://localhost:3004',
+  ];
+
+  // Keep FRONTEND_URL for backward compatibility.
+  const backwardCompatibleOrigins = [process.env.FRONTEND_URL].filter(
+    Boolean,
+  ) as string[];
+
+  return Array.from(
+    new Set([
+      ...defaultLocalOrigins,
+      ...backwardCompatibleOrigins,
+      ...fromCorsOrigins,
+    ]),
+  );
+}
+
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   
@@ -65,11 +92,7 @@ async function bootstrap() {
   });
   
   // Habilitar CORS para el frontend Next.js
-  const allowedOrigins = [
-    'http://localhost:3000',
-    'http://localhost:3001',
-    process.env.FRONTEND_URL, // Para producción
-  ].filter(Boolean);
+  const allowedOrigins = parseAllowedOriginsFromEnv();
 
   app.enableCors({
     origin: (origin, callback) => {
