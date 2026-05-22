@@ -410,7 +410,7 @@ export default function CompanySettingsPage() {
       
       console.log('📥 Datos cargados desde el servidor:', response.data);
       
-      const nextFormData = {
+      const nextFormData: typeof formData = {
         companyName: response.data.companyName || '',
         legalId: response.data.legalId || '',
         website: response.data.website || '',
