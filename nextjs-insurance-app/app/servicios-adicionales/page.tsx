@@ -51,15 +51,18 @@ export default function ServiciosAdicionalesPage() {
   const [selectedService, setSelectedService] = useState<AdditionalService | null>(null);
   const [settings, setSettings] = useState<PublicCompanySettings | null>(null);
 
+  // Fetch settings
   useEffect(() => {
+    const loadSettings = async () => {
+      const data = await getPublicCompanySettings();
+      setSettings(data);
+    };
     loadSettings();
+  }, []);
+
+  useEffect(() => {
     fetchData();
   }, [selectedCategory]);
-
-  const loadSettings = async () => {
-    const companySettings = await getPublicCompanySettings();
-    setSettings(companySettings);
-  };
 
   const fetchData = async () => {
     try {
@@ -101,6 +104,27 @@ export default function ServiciosAdicionalesPage() {
   const heroConfig = settings?.pageHeroes?.['additional-services'];
   const hasCustomHero = heroConfig && heroConfig.imageUrl;
 
+  // Build CTA URL for geo-whatsapp action
+  const getCtaHref = () => {
+    if (!heroConfig?.ctaUrl) return '#';
+    
+    if (heroConfig.ctaAction === 'geo-whatsapp') {
+      // Use WhatsApp number from settings
+      const whatsappNumber = settings?.socialMedia?.whatsapp;
+      if (whatsappNumber) {
+        const cleanNumber = whatsappNumber.replace(/\D/g, '');
+        return `https://wa.me/${cleanNumber}`;
+      }
+    }
+    
+    return heroConfig.ctaUrl;
+  };
+
+  const getCtaTarget = () => {
+    if (!heroConfig?.ctaAction) return '_self';
+    return heroConfig.ctaAction === 'link' ? '_self' : '_blank';
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
       {/* Hero Section */}
@@ -130,10 +154,10 @@ export default function ServiciosAdicionalesPage() {
             >
               {heroConfig.subtitle || 'Protege tu viaje con coberturas adicionales diseñadas para cada necesidad.'}
             </p>
-            {heroConfig.ctaText && heroConfig.ctaUrl && (
+            {heroConfig.ctaText && (
               <a
-                href={heroConfig.ctaUrl}
-                target={heroConfig.ctaAction === 'link' ? '_self' : '_blank'}
+                href={getCtaHref()}
+                target={getCtaTarget()}
                 rel="noopener noreferrer"
                 className="inline-block bg-emerald-500 text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-emerald-600 transition-all shadow-lg"
               >
@@ -339,7 +363,7 @@ export default function ServiciosAdicionalesPage() {
             <div className={`bg-gradient-to-r from-blue-600 to-blue-500 p-6 md:p-8 text-white ${selectedService.imageUrl ? '' : 'rounded-t-2xl'}`}>
               <div className="flex justify-between items-start">
                 <div>
-                  <span className="text-5xl mb-3 block h-14 w-14 rounded-xl bg-white/20 overflow-hidden inline-flex items-center justify-center">
+                  <span className="text-5xl mb-3 h-14 w-14 rounded-xl bg-white/20 overflow-hidden inline-flex items-center justify-center">
                     {selectedService.iconUrl ? (
                       <img
                         src={selectedService.iconUrl}

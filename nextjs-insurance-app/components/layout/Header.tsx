@@ -2,33 +2,27 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
-import { getPublicCompanySettings, PublicCompanySettings } from "@/lib/api/public-settings";
+import { PublicCompanySettings } from "@/lib/api/public-settings";
 
-export default function Header() {
+interface HeaderProps {
+  settings: PublicCompanySettings | null;
+}
+
+export default function Header({ settings }: HeaderProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [companySettings, setCompanySettings] = useState<PublicCompanySettings | null>(null);
   const { user, isAuthenticated, logout } = useAuth();
   const router = useRouter();
-
-  useEffect(() => {
-    const loadSettings = async () => {
-      const settings = await getPublicCompanySettings();
-      setCompanySettings(settings);
-    };
-
-    loadSettings();
-  }, []);
 
   const handleLogout = () => {
     logout();
     router.push('/');
   };
 
-  const companyName = companySettings?.companyName || "Seguros de Viaje";
-  const logoUrl = companySettings?.logoUrl;
+  const companyName = settings?.companyName || "Seguros de Viaje";
+  const logoUrl = settings?.logoUrl;
 
   return (
     <nav className="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md shadow-sm border-b border-slate-100 h-20">
@@ -41,6 +35,7 @@ export default function Header() {
               width={140}
               height={44}
               className="h-10 w-auto object-contain"
+              priority
               unoptimized
             />
           ) : (

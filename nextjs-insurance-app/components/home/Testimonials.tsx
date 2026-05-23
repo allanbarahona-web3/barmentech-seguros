@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 interface Testimonial {
   id: number;
@@ -116,12 +116,12 @@ export default function Testimonials() {
   const cardsPerView = 4;
   const totalSlides = Math.ceil(TESTIMONIALS.length / cardsPerView);
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     if (isAnimating) return;
     setIsAnimating(true);
     setCurrentIndex((prev) => (prev + 1) % totalSlides);
     setTimeout(() => setIsAnimating(false), 500);
-  };
+  }, [isAnimating, totalSlides]);
 
   const handlePrev = () => {
     if (isAnimating) return;
@@ -143,7 +143,7 @@ export default function Testimonials() {
     }, 8000);
 
     return () => clearInterval(interval);
-  }, [currentIndex, isAnimating]);
+  }, [handleNext]);
 
   const visibleTestimonials = TESTIMONIALS.slice(
     currentIndex * cardsPerView,

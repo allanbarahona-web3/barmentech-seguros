@@ -2,29 +2,22 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
-import { getPublicCompanySettings, PublicCompanySettings } from "@/lib/api/public-settings";
+import { useMemo } from "react";
+import { PublicCompanySettings } from "@/lib/api/public-settings";
 
-export default function Footer() {
-  const [companySettings, setCompanySettings] = useState<PublicCompanySettings | null>(null);
+interface FooterProps {
+  settings: PublicCompanySettings | null;
+}
 
-  useEffect(() => {
-    const loadSettings = async () => {
-      const settings = await getPublicCompanySettings();
-      setCompanySettings(settings);
-    };
-
-    loadSettings();
-  }, []);
-
-  const companyName = companySettings?.companyName || "Seguros de Viaje";
-  const logoUrl = companySettings?.logoUrl;
+export default function Footer({ settings }: FooterProps) {
+  const companyName = settings?.companyName || "Seguros de Viaje";
+  const logoUrl = settings?.logoUrl;
   const mainPhone = useMemo(() => {
-    return companySettings?.phoneNumbers?.[0]?.phone || "+506 4000-0000";
-  }, [companySettings]);
-  const email = companySettings?.email || "info@seguros.cr";
-  const address = companySettings?.businessAddress || "Escazú Village, San José";
-  const socialMedia = companySettings?.socialMedia || {};
+    return settings?.phoneNumbers?.[0]?.phone || "+506 4000-0000";
+  }, [settings]);
+  const email = settings?.email || "info@seguros.cr";
+  const address = settings?.businessAddress || "Escazú Village, San José";
+  const socialMedia = settings?.socialMedia || {};
 
   return (
     <footer className="bg-slate-50 border-t border-slate-200 py-16">

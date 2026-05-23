@@ -1,0 +1,24 @@
+# Configuration files
+postcss.config.mjs
+next.config.ts
+tailwind.config.ts
+next-env.d.ts
+
+# Build outputs
+.next/
+out/
+dist/
+build/
+
+# Dependencies
+node_modules/
+
+# Logs
+*.log
+
+# Environment files
+.env*
+
+# Cache
+.turbo/
+.cache/

@@ -103,7 +103,7 @@ export default function LeadDetailsModal({ lead, isOpen, onClose }: LeadDetailsM
                   </div>
                   <div>
                     <p className="text-xs text-slate-500">IP</p>
-                    <p className="text-sm font-medium text-slate-800 font-mono text-xs">{lead.ip || 'N/A'}</p>
+                    <p className="text-xs font-medium text-slate-800 font-mono">{lead.ip || 'N/A'}</p>
                   </div>
                   <div>
                     <p className="text-xs text-slate-500">Fecha de Captura</p>
