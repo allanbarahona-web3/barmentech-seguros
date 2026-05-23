@@ -41,6 +41,7 @@ export default function LeadsPage() {
   useEffect(() => {
     loadLeads();
     loadStats();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters]);
 
   const loadLeads = async () => {

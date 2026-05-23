@@ -202,6 +202,7 @@ export default function CompanySettingsPage() {
   useEffect(() => {
     fetchSettings();
     fetchLegalDocs();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchLegalDocs = async () => {

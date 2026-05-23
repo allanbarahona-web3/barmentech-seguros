@@ -62,6 +62,7 @@ export default function ServiciosAdicionalesPage() {
 
   useEffect(() => {
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCategory]);
 
   const fetchData = async () => {
