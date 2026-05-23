@@ -408,8 +408,6 @@ export default function CompanySettingsPage() {
       const response = await apiClient.get('/settings');
       setSettings(response.data);
       
-      console.log('📥 Datos cargados desde el servidor:', response.data);
-      
       const nextFormData: typeof formData = {
         companyName: response.data.companyName || '',
         legalId: response.data.legalId || '',
@@ -459,8 +457,6 @@ export default function CompanySettingsPage() {
         phones: getPhonesSnapshot(nextFormData),
         socialMedia: getSocialMediaSnapshot(nextFormData),
       });
-      
-      console.log('📝 Formulario poblado con datos');
     } catch (error) {
       console.error('Error fetching settings:', error);
     } finally {
@@ -471,7 +467,7 @@ export default function CompanySettingsPage() {
   const handleSaveBasicInfo = async () => {
     try {
       setSavingBasicInfo(true);
-      await apiClient.put('/settings/basic-info', {
+      await apiClient.put('/settings', {
         companyName: formData.companyName,
         legalId: formData.legalId,
         website: formData.website,
@@ -485,8 +481,13 @@ export default function CompanySettingsPage() {
       fetchSettings();
     } catch (error: any) {
       console.error('❌ Error saving basic info:', error);
-      console.error('Detalles del error:', error.response?.data);
-      alert(error.response?.data?.message || 'Error al guardar la información básica');
+      if (error.response) {
+        console.error('Detalles del error:', error.response.data);
+        alert(error.response.data?.message || 'Error al guardar la información básica');
+      } else {
+        console.error('Error completo:', error);
+        alert('Error al guardar información básica. Revisa la consola para más detalles.');
+      }
     } finally {
       setSavingBasicInfo(false);
     }
@@ -509,16 +510,22 @@ export default function CompanySettingsPage() {
         cleanedPhoneNumbers[0].isPrimary = true;
       }
 
-      await apiClient.put('/settings/phones', {
-        phoneNumbers: cleanedPhoneNumbers,
-      });
+      // Forzar serialización limpia para evitar problemas con estructuras extrañas
+      const payload = JSON.parse(JSON.stringify({ phoneNumbers: cleanedPhoneNumbers }));
+
+      await apiClient.put('/settings', payload);
 
       alert('✅ Teléfonos guardados');
       fetchSettings();
     } catch (error: any) {
       console.error('❌ Error saving phones:', error);
-      console.error('Detalles del error:', error.response?.data);
-      alert(error.response?.data?.message || 'Error al guardar los teléfonos');
+      if (error.response) {
+        console.error('Detalles del error:', error.response.data);
+        alert(error.response.data?.message || 'Error al guardar los teléfonos');
+      } else {
+        console.error('Error completo:', error);
+        alert('Error al guardar los teléfonos. Revisa la consola para más detalles.');
+      }
     } finally {
       setSavingPhones(false);
     }
@@ -528,7 +535,7 @@ export default function CompanySettingsPage() {
     try {
       setSavingSocialMedia(true);
 
-      await apiClient.put('/settings/social-media', {
+      await apiClient.put('/settings', {
         socialMedia: {
           facebook: formData.socialMedia.facebook,
           instagram: formData.socialMedia.instagram,
@@ -542,8 +549,13 @@ export default function CompanySettingsPage() {
       fetchSettings();
     } catch (error: any) {
       console.error('❌ Error saving social media:', error);
-      console.error('Detalles del error:', error.response?.data);
-      alert(error.response?.data?.message || 'Error al guardar redes sociales');
+      if (error.response) {
+        console.error('Detalles del error:', error.response.data);
+        alert(error.response.data?.message || 'Error al guardar redes sociales');
+      } else {
+        console.error('Error completo:', error);
+        alert('Error al guardar redes sociales. Revisa la consola para más detalles.');
+      }
     } finally {
       setSavingSocialMedia(false);
     }
@@ -761,22 +773,31 @@ export default function CompanySettingsPage() {
     try {
       setSavingAdditionalServicesHero(true);
 
-      await apiClient.put('/settings/page-hero', {
-        pageKey: 'additional-services',
-        title: formData.additionalServicesHeroTitle,
-        subtitle: formData.additionalServicesHeroSubtitle,
-        ctaText: formData.additionalServicesHeroCtaText,
-        ctaUrl: formData.additionalServicesHeroCtaUrl || '',
-        ctaAction: formData.additionalServicesHeroCtaAction,
-        textColor: formData.additionalServicesHeroTextColor,
-        overlayOpacity: Number(formData.additionalServicesHeroOverlayOpacity || 0),
+      await apiClient.put('/settings', {
+        pageHeroes: {
+          'additional-services': {
+            title: formData.additionalServicesHeroTitle,
+            subtitle: formData.additionalServicesHeroSubtitle,
+            ctaText: formData.additionalServicesHeroCtaText,
+            ctaUrl: formData.additionalServicesHeroCtaUrl || '',
+            ctaAction: formData.additionalServicesHeroCtaAction,
+            textColor: formData.additionalServicesHeroTextColor,
+            overlayOpacity: Number(formData.additionalServicesHeroOverlayOpacity || 0),
+          },
+        },
       });
 
       alert('✅ Configuración del hero guardada exitosamente');
       fetchSettings();
     } catch (error: any) {
       console.error('Error saving additional services hero config:', error);
-      alert(error.response?.data?.message || 'Error al guardar la configuración del hero');
+      if (error.response) {
+        console.error('Detalles del error:', error.response.data);
+        alert(error.response.data?.message || 'Error al guardar la configuración del hero');
+      } else {
+        console.error('Error completo:', error);
+        alert('Error al guardar configuración. Revisa la consola para más detalles.');
+      }
     } finally {
       setSavingAdditionalServicesHero(false);
     }

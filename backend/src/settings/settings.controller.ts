@@ -41,8 +41,24 @@ export class SettingsController {
 
   @Put()
   @Roles(UserRole.ADMIN)
-  async updateSettings(@Body() updateDto: UpdateSettingsDto) {
-    return this.settingsService.updateSettings(updateDto);
+  async updateSettings(@Body() updateDto: any) {
+    // Forzar conversión correcta de phoneNumbers si están mal formados
+    if (updateDto.phoneNumbers && Array.isArray(updateDto.phoneNumbers)) {
+      updateDto.phoneNumbers = updateDto.phoneNumbers.map((item: any) => {
+        // Si es un array con propiedades, convertirlo a objeto
+        if (Array.isArray(item) && (item as any).country) {
+          return {
+            country: (item as any).country,
+            phone: (item as any).phone,
+            isPrimary: (item as any).isPrimary,
+            regionGroup: (item as any).regionGroup,
+          };
+        }
+        return item;
+      });
+    }
+    
+    return this.settingsService.updateSettings(updateDto as UpdateSettingsDto);
   }
 
   @Post('upload-logo')

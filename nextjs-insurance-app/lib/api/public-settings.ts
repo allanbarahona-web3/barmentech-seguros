@@ -54,7 +54,7 @@ export interface PublicLegalDoc {
   updatedAt: string;
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3005/api';
 
 export async function getPublicCompanySettings(): Promise<PublicCompanySettings | null> {
   try {
