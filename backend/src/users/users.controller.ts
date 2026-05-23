@@ -1,4 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, Request, BadRequestException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Query,
+  Request,
+  BadRequestException,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto, UpdateUserDto } from './dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -142,7 +154,7 @@ export class UsersController {
   @Post(':id/resend-activation')
   async resendActivation(@Param('id') id: string) {
     const user = await this.usersService.findById(id);
-    
+
     if (!user || user.role !== UserRole.AGENT) {
       return { message: 'User not found or not an agent' };
     }
@@ -153,7 +165,7 @@ export class UsersController {
 
     // Generate new token
     const { token, expiry } = this.authService.generateActivationToken();
-    
+
     // Update user with new token
     await this.usersService.update(id, {
       activationToken: token,

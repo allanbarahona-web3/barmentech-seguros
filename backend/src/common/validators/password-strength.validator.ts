@@ -1,8 +1,4 @@
-import {
-  registerDecorator,
-  ValidationOptions,
-  ValidationArguments,
-} from 'class-validator';
+import { registerDecorator, ValidationOptions } from 'class-validator';
 
 /**
  * Validador personalizado para contraseñas fuertes
@@ -21,27 +17,28 @@ export function IsStrongPassword(validationOptions?: ValidationOptions) {
       propertyName: propertyName,
       options: validationOptions,
       validator: {
-        validate(value: any, args: ValidationArguments) {
+        validate(value: any) {
           if (typeof value !== 'string') return false;
-          
+
           // Mínimo 8 caracteres
           if (value.length < 8) return false;
-          
+
           // Al menos una mayúscula
           if (!/[A-Z]/.test(value)) return false;
-          
+
           // Al menos una minúscula
           if (!/[a-z]/.test(value)) return false;
-          
+
           // Al menos un número
           if (!/\d/.test(value)) return false;
-          
+
           // Al menos un carácter especial
-          if (!/[!@#$%^&*(),.?":{}|<>_\-+=[\]\\/'`;~]/.test(value)) return false;
-          
+          if (!/[!@#$%^&*(),.?":{}|<>_\-+=[\]\\/'`;~]/.test(value))
+            return false;
+
           return true;
         },
-        defaultMessage(args: ValidationArguments) {
+        defaultMessage() {
           return 'La contraseña debe tener mínimo 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial (!@#$%^&* etc)';
         },
       },

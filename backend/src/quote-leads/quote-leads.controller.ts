@@ -11,7 +11,7 @@ import {
   Req,
 } from '@nestjs/common';
 import { QuoteLeadsService } from './quote-leads.service';
-import { CreateQuoteLeadDto, UpdateQuoteLeadDto, FilterQuoteLeadsDto } from './dto';
+import { UpdateQuoteLeadDto, FilterQuoteLeadsDto } from './dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';

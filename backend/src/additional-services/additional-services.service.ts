@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { StorageService } from '../storage/storage.service';
@@ -30,9 +34,13 @@ export class AdditionalServicesService {
 
       return {
         name: typeof source?.name === 'string' ? source.name : '',
-        price: typeof source?.price === 'number' ? source.price : Number(source?.price) || 0,
+        price:
+          typeof source?.price === 'number'
+            ? source.price
+            : Number(source?.price) || 0,
         coverage: typeof source?.coverage === 'string' ? source.coverage : '',
-        description: typeof source?.description === 'string' ? source.description : '',
+        description:
+          typeof source?.description === 'string' ? source.description : '',
       };
     });
   }
@@ -53,7 +61,9 @@ export class AdditionalServicesService {
     return this.prisma.additionalService.create({
       data: {
         ...createDto,
-        coverageLevels: this.normalizeCoverageLevels(createDto.coverageLevels || []),
+        coverageLevels: this.normalizeCoverageLevels(
+          createDto.coverageLevels || [],
+        ),
         features: createDto.features || [],
       },
     });
@@ -68,10 +78,7 @@ export class AdditionalServicesService {
         isActive: true,
         ...(category && { category }),
       },
-      orderBy: [
-        { displayOrder: 'asc' },
-        { createdAt: 'desc' },
-      ],
+      orderBy: [{ displayOrder: 'asc' }, { createdAt: 'desc' }],
       select: {
         id: true,
         name: true,
@@ -98,10 +105,7 @@ export class AdditionalServicesService {
         ...(category && { category }),
         ...(!includeInactive && { isActive: true }),
       },
-      orderBy: [
-        { displayOrder: 'asc' },
-        { createdAt: 'desc' },
-      ],
+      orderBy: [{ displayOrder: 'asc' }, { createdAt: 'desc' }],
     });
   }
 
@@ -161,17 +165,23 @@ export class AdditionalServicesService {
     if (updateDto.name !== undefined) data.name = updateDto.name;
     if (updateDto.slug !== undefined) data.slug = updateDto.slug;
     if (updateDto.category !== undefined) data.category = updateDto.category;
-    if (updateDto.shortDescription !== undefined) data.shortDescription = updateDto.shortDescription;
-    if (updateDto.fullDescription !== undefined) data.fullDescription = updateDto.fullDescription;
+    if (updateDto.shortDescription !== undefined)
+      data.shortDescription = updateDto.shortDescription;
+    if (updateDto.fullDescription !== undefined)
+      data.fullDescription = updateDto.fullDescription;
     if (updateDto.basePrice !== undefined) data.basePrice = updateDto.basePrice;
-    if (updateDto.pricingType !== undefined) data.pricingType = updateDto.pricingType;
+    if (updateDto.pricingType !== undefined)
+      data.pricingType = updateDto.pricingType;
     if (updateDto.iconUrl !== undefined) data.iconUrl = updateDto.iconUrl;
     if (updateDto.imageUrl !== undefined) data.imageUrl = updateDto.imageUrl;
     if (updateDto.isActive !== undefined) data.isActive = updateDto.isActive;
-    if (updateDto.displayOrder !== undefined) data.displayOrder = updateDto.displayOrder;
-    if (updateDto.features !== undefined) data.features = updateDto.features as Prisma.InputJsonValue;
+    if (updateDto.displayOrder !== undefined)
+      data.displayOrder = updateDto.displayOrder;
+    if (updateDto.features !== undefined) data.features = updateDto.features;
     if (updateDto.coverageLevels !== undefined) {
-      data.coverageLevels = this.normalizeCoverageLevels(updateDto.coverageLevels) as Prisma.InputJsonValue;
+      data.coverageLevels = this.normalizeCoverageLevels(
+        updateDto.coverageLevels,
+      );
     }
 
     return this.prisma.additionalService.update({
@@ -203,7 +213,9 @@ export class AdditionalServicesService {
       try {
         const iconKey = service.iconUrl.split('/').pop();
         if (iconKey) {
-          await this.storageService.deleteFile(`additional-services/icons/${iconKey}`);
+          await this.storageService.deleteFile(
+            `additional-services/icons/${iconKey}`,
+          );
         }
       } catch (error) {
         console.error('Error deleting icon from storage:', error);
@@ -214,7 +226,9 @@ export class AdditionalServicesService {
       try {
         const imageKey = service.imageUrl.split('/').pop();
         if (imageKey) {
-          await this.storageService.deleteFile(`additional-services/images/${imageKey}`);
+          await this.storageService.deleteFile(
+            `additional-services/images/${imageKey}`,
+          );
         }
       } catch (error) {
         console.error('Error deleting image from storage:', error);

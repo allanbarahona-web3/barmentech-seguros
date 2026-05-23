@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { QuotationStatus, UserRole } from '@prisma/client';
 import { CreateQuotationDto, UpdateQuotationDto } from './dto';
@@ -37,10 +37,7 @@ export class QuotationsService {
   async findAll(userId: string, userRole: UserRole) {
     // ADMIN y AGENT ven todas las cotizaciones
     // CLIENT solo ve las suyas
-    const where =
-      userRole === UserRole.CLIENT
-        ? { clientId: userId }
-        : {}; // ADMIN/AGENT ven todas
+    const where = userRole === UserRole.CLIENT ? { clientId: userId } : {}; // ADMIN/AGENT ven todas
 
     return this.prisma.quotation.findMany({
       where,

@@ -15,7 +15,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { QuotationsService } from './quotations.service';
-import { CreateQuotationDto, UpdateQuotationDto, SendEmailDto } from './dto';
+import { CreateQuotationDto, UpdateQuotationDto } from './dto';
 import { OpenAIService } from './openai.service';
 import { PdfGeneratorService } from './pdf-generator.service';
 import { MailService } from '../mail/mail.service';
@@ -26,6 +26,7 @@ import { Roles } from '../auth/roles.decorator';
 import { UserRole } from '@prisma/client';
 import { FileUploadValidator } from '../common/validators/file-upload.validator';
 import { SecurityLoggerService } from '../common/logger/logger.service';
+import type { RequestWithUser } from '../common/types/request.types';
 
 @Controller('quotations')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -47,7 +48,7 @@ export class QuotationsController {
   @UseInterceptors(FileInterceptor('pdf'))
   async extractFromPdf(
     @UploadedFile() file: Express.Multer.File,
-    @Request() req,
+    @Request() req: RequestWithUser,
   ) {
     // Validación estricta de PDF
     FileUploadValidator.validatePdf(file);
@@ -62,7 +63,10 @@ export class QuotationsController {
 
     try {
       // Subir PDF a Spaces primero
-      const key = this.storageService.generateUniqueKey('assist-card-originals', file.originalname);
+      const key = this.storageService.generateUniqueKey(
+        'assist-card-originals',
+        file.originalname,
+      );
       const uploadResult = await this.storageService.uploadFile(
         file.buffer,
         key,
@@ -70,14 +74,16 @@ export class QuotationsController {
       );
 
       // Extraer datos con OpenAI usando el buffer en memoria
-      const extractedData = await this.openaiService.extractDataFromPdfBuffer(file.buffer);
+      const extractedData = await this.openaiService.extractDataFromPdfBuffer(
+        file.buffer,
+      );
 
       return {
         success: true,
         data: extractedData,
         originalPdfUrl: uploadResult.url,
       };
-    } catch (error) {
+    } catch {
       throw new BadRequestException('Failed to extract data from PDF');
     }
   }
@@ -99,12 +105,16 @@ export class QuotationsController {
 
   @Get(':id')
   async findOne(@Param('id') id: string, @Request() req) {
-    const quotation = await this.quotationsService.findOne(id, req.user.id, req.user.role);
-    
+    const quotation = await this.quotationsService.findOne(
+      id,
+      req.user.id,
+      req.user.role,
+    );
+
     if (!quotation) {
       throw new NotFoundException('Quotation not found or access denied');
     }
-    
+
     return quotation;
   }
 
@@ -123,8 +133,12 @@ export class QuotationsController {
   @Post(':id/generate-pdf')
   @Roles(UserRole.ADMIN, UserRole.AGENT)
   async generatePdf(@Param('id') id: string, @Request() req) {
-    const quotation = await this.quotationsService.findOne(id, req.user.id, req.user.role);
-    
+    const quotation = await this.quotationsService.findOne(
+      id,
+      req.user.id,
+      req.user.role,
+    );
+
     if (!quotation) {
       throw new NotFoundException('Quotation not found');
     }
@@ -152,7 +166,7 @@ export class QuotationsController {
         success: true,
         pdfUrl,
       };
-    } catch (error) {
+    } catch {
       throw new BadRequestException('Failed to generate PDF');
     }
   }
@@ -160,8 +174,12 @@ export class QuotationsController {
   @Post(':id/send-email')
   @Roles(UserRole.ADMIN, UserRole.AGENT)
   async sendEmail(@Param('id') id: string, @Request() req) {
-    const quotation = await this.quotationsService.findOne(id, req.user.id, req.user.role);
-    
+    const quotation = await this.quotationsService.findOne(
+      id,
+      req.user.id,
+      req.user.role,
+    );
+
     if (!quotation) {
       throw new NotFoundException('Quotation not found');
     }
@@ -178,17 +196,16 @@ export class QuotationsController {
         pdfUrl: quotation.pdfUrl || undefined,
         destination: quotation.destination || undefined,
         globalMaxAmount: quotation.globalMaxAmount,
-
       });
 
       // Actualizar estado a SENT
-      await this.quotationsService.update(id, { status: 'SENT' as any });
+      await this.quotationsService.update(id, { status: 'SENT' });
 
       return {
         success: true,
         message: 'Email sent successfully',
       };
-    } catch (error) {
+    } catch {
       throw new BadRequestException('Failed to send email');
     }
   }

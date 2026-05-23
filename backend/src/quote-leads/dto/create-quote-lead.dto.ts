@@ -1,4 +1,11 @@
-import { IsString, IsInt, IsBoolean, IsEmail, IsOptional, Min } from 'class-validator';
+import {
+  IsString,
+  IsInt,
+  IsBoolean,
+  IsEmail,
+  IsOptional,
+  Min,
+} from 'class-validator';
 
 export class CreateQuoteLeadDto {
   @IsOptional()

@@ -1,6 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
+import {
+  S3Client,
+  PutObjectCommand,
+  DeleteObjectCommand,
+} from '@aws-sdk/client-s3';
 import * as path from 'path';
 import sharp from 'sharp';
 
@@ -20,8 +24,12 @@ export class StorageService {
 
   constructor(private configService: ConfigService) {
     this.region = this.configService.get<string>('DO_SPACES_REGION') || 'sfo3';
-    this.endpoint = this.configService.get<string>('DO_SPACES_ENDPOINT') || 'https://sfo3.digitaloceanspaces.com';
-    this.bucket = this.configService.get<string>('DO_SPACES_BUCKET') || 'seguros-barmentech';
+    this.endpoint =
+      this.configService.get<string>('DO_SPACES_ENDPOINT') ||
+      'https://sfo3.digitaloceanspaces.com';
+    this.bucket =
+      this.configService.get<string>('DO_SPACES_BUCKET') ||
+      'seguros-barmentech';
 
     const accessKeyId = this.configService.get<string>('DO_SPACES_KEY');
     const secretAccessKey = this.configService.get<string>('DO_SPACES_SECRET');
@@ -89,10 +97,7 @@ export class StorageService {
     key: string,
     quality = 85,
   ): Promise<UploadResult> {
-    const webpBuffer = await sharp(file)
-      .rotate()
-      .webp({ quality })
-      .toBuffer();
+    const webpBuffer = await sharp(file).rotate().webp({ quality }).toBuffer();
 
     const webpKey = key.replace(/\.[^/.]+$/, '.webp');
     return this.uploadFile(webpBuffer, webpKey, 'image/webp');
@@ -151,7 +156,7 @@ export class StorageService {
     const random = Math.round(Math.random() * 1e9);
     const ext = path.extname(filename);
     const basename = path.basename(filename, ext);
-    
+
     return `${folder}/${basename}-${timestamp}-${random}${ext}`;
   }
 }

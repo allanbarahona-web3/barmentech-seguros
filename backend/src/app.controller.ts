@@ -1,4 +1,5 @@
 import { Body, Controller, Get, Post, Req } from '@nestjs/common';
+import type { Request } from 'express';
 import { AppService } from './app.service';
 import { MailService } from './mail/mail.service';
 import { SettingsService } from './settings/settings.service';
@@ -29,8 +30,12 @@ export class AppController {
   }
 
   @Post('quote-leads/public-intake')
-  async registerPublicQuoteLead(@Body() body: RegisterQuoteLeadBody, @Req() req: any) {
-    const destination = String(body.destination || '').trim() || 'No especificado';
+  async registerPublicQuoteLead(
+    @Body() body: RegisterQuoteLeadBody,
+    @Req() req: Request,
+  ) {
+    const destination =
+      String(body.destination || '').trim() || 'No especificado';
     const startDate = String(body.startDate || '').trim();
     const endDate = String(body.endDate || '').trim();
     const totalTravelers = Number(body.totalTravelers || 1) || 1;
@@ -48,22 +53,25 @@ export class AppController {
         ? countryRaw.toUpperCase()
         : null;
 
-    const route = await this.settingsService.resolveWhatsAppRoute(detectedCountry);
+    const route =
+      await this.settingsService.resolveWhatsAppRoute(detectedCountry);
 
     const xForwardedFor = req?.headers?.['x-forwarded-for'];
     const ip = Array.isArray(xForwardedFor)
-      ? xForwardedFor[0]
+      ? String(xForwardedFor[0] || '')
       : typeof xForwardedFor === 'string'
-        ? xForwardedFor.split(',')[0]?.trim()
-        : req?.ip || '';
+        ? xForwardedFor.split(',')[0]?.trim() || ''
+        : String(req?.ip || '');
 
     const userAgentRaw = req?.headers?.['user-agent'];
     const userAgent = Array.isArray(userAgentRaw)
-      ? userAgentRaw[0]
+      ? String(userAgentRaw[0] || '')
       : String(userAgentRaw || '');
 
     const sourceUrlRaw = req?.headers?.origin || req?.headers?.referer || '';
-    const sourceUrl = Array.isArray(sourceUrlRaw) ? sourceUrlRaw[0] : String(sourceUrlRaw || '');
+    const sourceUrl = Array.isArray(sourceUrlRaw)
+      ? String(sourceUrlRaw[0] || '')
+      : String(sourceUrlRaw || '');
 
     // Save lead to database
     let leadSaved = false;

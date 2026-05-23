@@ -132,7 +132,9 @@ export class AdditionalServicesController {
     );
 
     // Update service
-    await this.additionalServicesService.update(id, { iconUrl: uploadResult.url });
+    await this.additionalServicesService.update(id, {
+      iconUrl: uploadResult.url,
+    });
 
     return { iconUrl: uploadResult.url };
   }
@@ -158,7 +160,9 @@ export class AdditionalServicesController {
     );
 
     // Update service
-    await this.additionalServicesService.update(id, { imageUrl: uploadResult.url });
+    await this.additionalServicesService.update(id, {
+      imageUrl: uploadResult.url,
+    });
 
     return { imageUrl: uploadResult.url };
   }

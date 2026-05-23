@@ -35,11 +35,11 @@ function parseAllowedOriginsFromEnv(): string[] {
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  
+
   // Configurar límite de tamaño de body para prevenir ataques DoS
   app.use(express.json({ limit: '10mb' })); // Máximo 10MB para JSON
   app.use(express.urlencoded({ extended: true, limit: '10mb' })); // Máximo 10MB para form data
-  
+
   // Validación global con class-validator
   app.useGlobalPipes(
     new ValidationPipe({
@@ -51,7 +51,7 @@ async function bootstrap() {
       },
     }),
   );
-  
+
   // Helmet - Seguridad de headers HTTP
   app.use(
     helmet({
@@ -85,12 +85,12 @@ async function bootstrap() {
       },
     }),
   );
-  
+
   // Servir archivos estáticos desde uploads
   app.useStaticAssets(join(__dirname, '..', 'uploads'), {
     prefix: '/uploads/',
   });
-  
+
   // Habilitar CORS para el frontend Next.js
   const allowedOrigins = parseAllowedOriginsFromEnv();
 
@@ -98,7 +98,7 @@ async function bootstrap() {
     origin: (origin, callback) => {
       // Permitir requests sin origin (mobile apps, Postman)
       if (!origin) return callback(null, true);
-      
+
       if (allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
@@ -116,10 +116,14 @@ async function bootstrap() {
 
   const port = process.env.PORT || 3005;
   await app.listen(port);
-  
+
   console.log(`🚀 Backend running on http://localhost:${port}`);
   console.log(`📋 API: http://localhost:${port}/api`);
   console.log(`🔒 Security: Helmet + Throttler + File Validation`);
   console.log(`📝 Logging: Security events → logs/security-*.log`);
 }
-bootstrap();
+
+bootstrap().catch((err) => {
+  console.error('Error starting application:', err);
+  process.exit(1);
+});

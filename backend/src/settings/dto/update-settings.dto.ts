@@ -1,4 +1,12 @@
-import { IsString, IsEmail, IsUrl, IsArray, IsObject, IsOptional, IsIn } from 'class-validator';
+import {
+  IsString,
+  IsEmail,
+  IsUrl,
+  IsArray,
+  IsObject,
+  IsOptional,
+  IsIn,
+} from 'class-validator';
 
 export type LegalDocType =
   | 'privacy_policy'

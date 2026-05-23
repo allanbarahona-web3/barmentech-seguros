@@ -19,6 +19,7 @@ import { UserRole } from '@prisma/client';
 import { StorageService } from '../storage/storage.service';
 import { FileUploadValidator } from '../common/validators/file-upload.validator';
 import { SecurityLoggerService } from '../common/logger/logger.service';
+import type { RequestWithUser } from '../common/types/request.types';
 import sharp from 'sharp';
 
 @Controller('settings')
@@ -49,7 +50,7 @@ export class SettingsController {
   @UseInterceptors(FileInterceptor('file'))
   async uploadLogo(
     @UploadedFile() file: Express.Multer.File,
-    @Request() req,
+    @Request() req: RequestWithUser,
   ) {
     // Validación estricta de imagen
     FileUploadValidator.validateImage(file);
@@ -82,7 +83,11 @@ export class SettingsController {
       .png({ compressionLevel: 9 })
       .toBuffer();
 
-    const webpResult = await this.storageService.uploadFile(webpBuffer, webpKey, 'image/webp');
+    const webpResult = await this.storageService.uploadFile(
+      webpBuffer,
+      webpKey,
+      'image/webp',
+    );
     const pngResult = await this.storageService.uploadFile(
       pngBuffer,
       pngKey,
@@ -104,7 +109,7 @@ export class SettingsController {
   @UseInterceptors(FileInterceptor('file'))
   async uploadSignature(
     @UploadedFile() file: Express.Multer.File,
-    @Request() req,
+    @Request() req: RequestWithUser,
   ) {
     // Validación estricta de imagen
     FileUploadValidator.validateImage(file);
@@ -118,7 +123,10 @@ export class SettingsController {
     );
 
     // Guardar siempre en WebP
-    const key = this.storageService.generateUniqueKey('company', `signature-${file.originalname}`);
+    const key = this.storageService.generateUniqueKey(
+      'company',
+      `signature-${file.originalname}`,
+    );
     const result = await this.storageService.uploadImageAsWebp(
       file.buffer,
       key,
@@ -138,7 +146,7 @@ export class SettingsController {
   @UseInterceptors(FileInterceptor('file'))
   async uploadFavicon(
     @UploadedFile() file: Express.Multer.File,
-    @Request() req,
+    @Request() req: RequestWithUser,
   ) {
     // Validación estricta de imagen
     FileUploadValidator.validateImage(file);
@@ -152,7 +160,10 @@ export class SettingsController {
     );
 
     // Guardar siempre en WebP
-    const key = this.storageService.generateUniqueKey('company', `favicon-${file.originalname}`);
+    const key = this.storageService.generateUniqueKey(
+      'company',
+      `favicon-${file.originalname}`,
+    );
     const result = await this.storageService.uploadImageAsWebp(
       file.buffer,
       key,

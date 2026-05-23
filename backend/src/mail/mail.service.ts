@@ -71,8 +71,10 @@ export class MailService {
     private settingsService: SettingsService,
   ) {
     this.resend = new Resend(this.configService.get('RESEND_API_KEY'));
-    this.frontendUrl = this.configService.get('FRONTEND_URL') || 'http://localhost:3004';
-    this.companyName = this.configService.get('COMPANY_NAME') || 'Barmentech Seguros';
+    this.frontendUrl =
+      this.configService.get('FRONTEND_URL') || 'http://localhost:3004';
+    this.companyName =
+      this.configService.get('COMPANY_NAME') || 'Barmentech Seguros';
   }
 
   /**
@@ -82,7 +84,11 @@ export class MailService {
     try {
       const branding = await this.getBrandingContext();
       const activationLink = `${this.frontendUrl}/activate/${data.activationToken}`;
-      const htmlContent = this.buildActivationEmailTemplate(data, activationLink, branding);
+      const htmlContent = this.buildActivationEmailTemplate(
+        data,
+        activationLink,
+        branding,
+      );
 
       const response = await this.resend.emails.send({
         from: `${branding.fromName} <${branding.fromEmail}>`,
@@ -92,14 +98,20 @@ export class MailService {
       });
 
       if (response.error) {
-        this.logger.error(`Failed to send activation email to ${data.to}:`, response.error);
+        this.logger.error(
+          `Failed to send activation email to ${data.to}:`,
+          response.error,
+        );
         throw new Error(response.error.message);
       }
 
       this.logger.log(`Activation email sent successfully to ${data.to}`);
       return true;
     } catch (error) {
-      this.logger.error(`Failed to send activation email to ${data.to}:`, error);
+      this.logger.error(
+        `Failed to send activation email to ${data.to}:`,
+        error,
+      );
       throw error;
     }
   }
@@ -120,11 +132,16 @@ export class MailService {
       });
 
       if (response.error) {
-        this.logger.error(`Failed to send quotation email to ${data.to}:`, response.error);
+        this.logger.error(
+          `Failed to send quotation email to ${data.to}:`,
+          response.error,
+        );
         throw new Error(response.error.message);
       }
 
-      this.logger.log(`Quotation email sent successfully to ${data.to}: ${response.data?.id || 'unknown'}`);
+      this.logger.log(
+        `Quotation email sent successfully to ${data.to}: ${response.data?.id || 'unknown'}`,
+      );
       return true;
     } catch (error) {
       this.logger.error(`Failed to send quotation email to ${data.to}:`, error);
@@ -144,7 +161,10 @@ export class MailService {
       });
 
       if (response.error) {
-        this.logger.error(`Failed to send welcome email to ${data.to}:`, response.error);
+        this.logger.error(
+          `Failed to send welcome email to ${data.to}:`,
+          response.error,
+        );
         return false;
       }
 
@@ -156,7 +176,9 @@ export class MailService {
     }
   }
 
-  async sendQuoteLeadNotificationEmail(data: SendQuoteLeadNotificationEmailDto): Promise<boolean> {
+  async sendQuoteLeadNotificationEmail(
+    data: SendQuoteLeadNotificationEmailDto,
+  ): Promise<boolean> {
     try {
       const branding = await this.getBrandingContext();
       const adminEmail =
@@ -165,7 +187,9 @@ export class MailService {
         this.configService.get('RESEND_FROM_EMAIL');
 
       if (!adminEmail) {
-        this.logger.warn('Skipping lead notification email: no admin email configured');
+        this.logger.warn(
+          'Skipping lead notification email: no admin email configured',
+        );
         return false;
       }
 
@@ -177,7 +201,10 @@ export class MailService {
       });
 
       if (response.error) {
-        this.logger.error('Failed to send quote lead notification email:', response.error);
+        this.logger.error(
+          'Failed to send quote lead notification email:',
+          response.error,
+        );
         return false;
       }
 
@@ -189,7 +216,9 @@ export class MailService {
     }
   }
 
-  async sendQuoteLeadAcknowledgementEmail(data: SendQuoteLeadAcknowledgementEmailDto): Promise<boolean> {
+  async sendQuoteLeadAcknowledgementEmail(
+    data: SendQuoteLeadAcknowledgementEmailDto,
+  ): Promise<boolean> {
     try {
       const branding = await this.getBrandingContext();
 
@@ -201,14 +230,22 @@ export class MailService {
       });
 
       if (response.error) {
-        this.logger.error(`Failed to send lead acknowledgement email to ${data.to}:`, response.error);
+        this.logger.error(
+          `Failed to send lead acknowledgement email to ${data.to}:`,
+          response.error,
+        );
         return false;
       }
 
-      this.logger.log(`Lead acknowledgement email sent successfully to ${data.to}`);
+      this.logger.log(
+        `Lead acknowledgement email sent successfully to ${data.to}`,
+      );
       return true;
     } catch (error) {
-      this.logger.error(`Failed to send lead acknowledgement email to ${data.to}:`, error);
+      this.logger.error(
+        `Failed to send lead acknowledgement email to ${data.to}:`,
+        error,
+      );
       return false;
     }
   }
@@ -258,7 +295,8 @@ export class MailService {
     data: SendQuotationEmailDto,
     branding: EmailBrandingContext,
   ): string {
-    const baseUrl = this.configService.get('BACKEND_URL') || 'http://localhost:3005';
+    const baseUrl =
+      this.configService.get('BACKEND_URL') || 'http://localhost:3005';
     const downloadLink = data.pdfUrl ? `${baseUrl}${data.pdfUrl}` : null;
 
     const bodyHtml = `
@@ -266,16 +304,22 @@ export class MailService {
       <p style="margin: 0 0 16px 0; color: #334155; font-size: 16px; line-height: 1.6;">
         Ya tenemos lista tu cotizacion personalizada de seguro de viaje.
       </p>
-      ${data.destination ? `
+      ${
+        data.destination
+          ? `
       <p style="margin: 0 0 12px 0; color: #334155; font-size: 16px; line-height: 1.6;">
         <strong>Destino:</strong> ${this.escapeHtml(data.destination)}
       </p>
-      ` : ''}
+      `
+          : ''
+      }
       <p style="margin: 0 0 20px 0; color: #334155; font-size: 16px; line-height: 1.6;">
         <strong>Cobertura maxima global:</strong>
         <span style="color: #2563eb; font-weight: 700;">${this.escapeHtml(data.globalMaxAmount)}</span>
       </p>
-      ${downloadLink ? `
+      ${
+        downloadLink
+          ? `
       <table role="presentation" style="width: 100%; margin: 24px 0; border-collapse: collapse;">
         <tr>
           <td style="text-align: center;">
@@ -285,7 +329,9 @@ export class MailService {
           </td>
         </tr>
       </table>
-      ` : ''}
+      `
+          : ''
+      }
       <div style="margin: 0 0 22px; padding: 16px; border-radius: 8px; background: #ecfeff; border-left: 4px solid #0891b2; color: #0f766e; font-size: 14px; line-height: 1.6;">
         <strong>Respaldado por Assist Card.</strong><br/>
         Si necesitas ajustar esta cotizacion, nuestro equipo te acompana durante todo el proceso.
@@ -328,7 +374,8 @@ export class MailService {
     }
 
     const preferred =
-      phoneNumbers.find((item: any) => Boolean(item?.isPrimary)) || phoneNumbers[0];
+      phoneNumbers.find((item: any) => Boolean(item?.isPrimary)) ||
+      phoneNumbers[0];
 
     const country = String(preferred?.country || '').trim();
     const phone = String(preferred?.phone || '').trim();
@@ -358,7 +405,9 @@ export class MailService {
   private async getBrandingContext(): Promise<EmailBrandingContext> {
     const settings = await this.settingsService.getSettings();
     const fromEmail =
-      settings.email || this.configService.get('RESEND_FROM_EMAIL') || 'onboarding@resend.dev';
+      settings.email ||
+      this.configService.get('RESEND_FROM_EMAIL') ||
+      'onboarding@resend.dev';
     const fromName = settings.companyName || this.companyName;
 
     return {

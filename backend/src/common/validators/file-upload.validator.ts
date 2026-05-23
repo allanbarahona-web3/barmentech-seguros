@@ -14,7 +14,12 @@ export class FileUploadValidator {
     }
 
     // Validar MIME type
-    const allowedMimeTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    const allowedMimeTypes = [
+      'image/jpeg',
+      'image/jpg',
+      'image/png',
+      'image/webp',
+    ];
     if (!allowedMimeTypes.includes(file.mimetype)) {
       throw new BadRequestException(
         'Tipo de archivo no permitido. Solo se permiten: JPEG, PNG, WebP',
@@ -23,7 +28,9 @@ export class FileUploadValidator {
 
     // Validar extensión del archivo
     const allowedExtensions = ['.jpg', '.jpeg', '.png', '.webp'];
-    const fileExtension = file.originalname.toLowerCase().match(/\.[^.]+$/)?.[0];
+    const fileExtension = file.originalname
+      .toLowerCase()
+      .match(/\.[^.]+$/)?.[0];
     if (!fileExtension || !allowedExtensions.includes(fileExtension)) {
       throw new BadRequestException(
         'Extensión de archivo no válida. Solo: .jpg, .jpeg, .png, .webp',
@@ -76,7 +83,9 @@ export class FileUploadValidator {
     }
 
     const allowedExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.ico'];
-    const fileExtension = file.originalname.toLowerCase().match(/\.[^.]+$/)?.[0];
+    const fileExtension = file.originalname
+      .toLowerCase()
+      .match(/\.[^.]+$/)?.[0];
     if (!fileExtension || !allowedExtensions.includes(fileExtension)) {
       throw new BadRequestException(
         'Extension de archivo no valida. Solo: .jpg, .jpeg, .png, .webp, .ico',
@@ -123,7 +132,9 @@ export class FileUploadValidator {
     }
 
     // Validar extensión
-    const fileExtension = file.originalname.toLowerCase().match(/\.[^.]+$/)?.[0];
+    const fileExtension = file.originalname
+      .toLowerCase()
+      .match(/\.[^.]+$/)?.[0];
     if (fileExtension !== '.pdf') {
       throw new BadRequestException('La extensión del archivo debe ser .pdf');
     }
@@ -170,7 +181,12 @@ export class FileUploadValidator {
     }
 
     // WebP: RIFF ... WEBP
-    if (buffer[0] === 0x52 && buffer[1] === 0x49 && buffer[2] === 0x46 && buffer[3] === 0x46) {
+    if (
+      buffer[0] === 0x52 &&
+      buffer[1] === 0x49 &&
+      buffer[2] === 0x46 &&
+      buffer[3] === 0x46
+    ) {
       return true;
     }
 

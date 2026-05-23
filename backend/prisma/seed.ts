@@ -49,7 +49,7 @@ async function main() {
 
   // 1. Crear configuración de la empresa
   console.log('🏢 Creating company settings...');
-  const companySettings = await prisma.companySettings.create({
+  await prisma.companySettings.create({
     data: {
       companyName: 'BarmenTech Seguros',
       legalId: '3-101-123456',
@@ -135,7 +135,7 @@ async function main() {
   console.log('📋 Creating sample quotations...');
 
   // Cotización 1 - Cliente 1, creada por admin
-  const quotation1 = await prisma.quotation.create({
+  await prisma.quotation.create({
     data: {
       clientId: client1.id,
       createdById: admin.id,
@@ -179,7 +179,7 @@ async function main() {
   console.log('✅ Quotation 1 created (SENT)');
 
   // Cotización 2 - Cliente 2, creada por agente
-  const quotation2 = await prisma.quotation.create({
+  await prisma.quotation.create({
     data: {
       clientId: client2.id,
       createdById: agent.id,
@@ -215,7 +215,8 @@ async function main() {
         },
       ],
       status: QuotationStatus.ACCEPTED,
-      notes: 'Viaje de negocios a Nueva York. Plan premium con cobertura COVID.',
+      notes:
+        'Viaje de negocios a Nueva York. Plan premium con cobertura COVID.',
       pdfUrl: null,
       originalPdfUrl: null,
     },
@@ -223,7 +224,7 @@ async function main() {
   console.log('✅ Quotation 2 created (ACCEPTED)');
 
   // Cotización 3 - Sin cliente (cotización rápida), creada por admin
-  const quotation3 = await prisma.quotation.create({
+  await prisma.quotation.create({
     data: {
       clientId: null,
       createdById: admin.id,
@@ -254,7 +255,8 @@ async function main() {
         },
       ],
       status: QuotationStatus.DRAFT,
-      notes: 'Cotización pendiente de confirmación. Grupo familiar de 4 personas.',
+      notes:
+        'Cotización pendiente de confirmación. Grupo familiar de 4 personas.',
       pdfUrl: null,
       originalPdfUrl: null,
     },
@@ -264,12 +266,13 @@ async function main() {
   // 4. Crear servicios adicionales de ejemplo
   console.log('🛡️  Creating additional services...');
 
-  const service1 = await prisma.additionalService.create({
+  await prisma.additionalService.create({
     data: {
       name: 'Equipaje Protegido Plus',
       slug: 'equipaje-protegido-plus',
       category: 'equipaje',
-      shortDescription: 'Protección adicional para pérdida, robo o daño de equipaje',
+      shortDescription:
+        'Protección adicional para pérdida, robo o daño de equipaje',
       fullDescription:
         'Cobertura extendida que protege tu equipaje contra pérdida, robo, daño o demora. Incluye asistencia 24/7 para rastreo y reembolso inmediato.',
       basePrice: 25,
@@ -307,7 +310,7 @@ async function main() {
   });
   console.log('✅ Service 1 created: Equipaje Protegido Plus');
 
-  const service2 = await prisma.additionalService.create({
+  await prisma.additionalService.create({
     data: {
       name: 'Cobertura COVID-19 Extra',
       slug: 'cobertura-covid-19-extra',
@@ -345,7 +348,7 @@ async function main() {
   });
   console.log('✅ Service 2 created: Cobertura COVID-19 Extra');
 
-  const service3 = await prisma.additionalService.create({
+  await prisma.additionalService.create({
     data: {
       name: 'Deportes de Aventura',
       slug: 'deportes-aventura',
@@ -383,7 +386,7 @@ async function main() {
   });
   console.log('✅ Service 3 created: Deportes de Aventura');
 
-  const service4 = await prisma.additionalService.create({
+  await prisma.additionalService.create({
     data: {
       name: 'Protección Embarazo',
       slug: 'proteccion-embarazo',
@@ -421,7 +424,7 @@ async function main() {
   });
   console.log('✅ Service 4 created: Protección Embarazo');
 
-  const service5 = await prisma.additionalService.create({
+  await prisma.additionalService.create({
     data: {
       name: 'Cancelación de Viaje Premium',
       slug: 'cancelacion-viaje-premium',
@@ -459,7 +462,7 @@ async function main() {
   });
   console.log('✅ Service 5 created: Cancelación de Viaje Premium');
 
-  const service6 = await prisma.additionalService.create({
+  await prisma.additionalService.create({
     data: {
       name: 'Tech Protection',
       slug: 'tech-protection',
@@ -497,7 +500,7 @@ async function main() {
   });
   console.log('✅ Service 6 created: Tech Protection');
 
-  const service7 = await prisma.additionalService.create({
+  await prisma.additionalService.create({
     data: {
       name: 'Mascota Protegida',
       slug: 'mascota-protegida',
@@ -546,7 +549,9 @@ async function main() {
   console.log('   Agent:  agente@barmentech.com / Admin123!');
   console.log('   Client: cliente1@example.com / Admin123!');
   console.log('   Client: cliente2@example.com / Admin123!');
-  console.log('\n⚠️  Note: Password complies with strong policy (8+ chars, uppercase, lowercase, number, special char)');
+  console.log(
+    '\n⚠️  Note: Password complies with strong policy (8+ chars, uppercase, lowercase, number, special char)',
+  );
 }
 
 main()

@@ -1,5 +1,13 @@
 import { Type } from 'class-transformer';
-import { IsString, IsNumber, IsBoolean, IsArray, IsOptional, Min, ValidateNested } from 'class-validator';
+import {
+  IsString,
+  IsNumber,
+  IsBoolean,
+  IsArray,
+  IsOptional,
+  Min,
+  ValidateNested,
+} from 'class-validator';
 
 export class CoverageLevelDto {
   @IsString()

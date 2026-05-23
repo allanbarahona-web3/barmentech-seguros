@@ -36,7 +36,9 @@ export class SettingsPublicController {
       throw new BadRequestException('Tipo de documento legal invalido');
     }
 
-    return this.settingsService.getPublishedLegalDocByType(type as LegalDocType);
+    return this.settingsService.getPublishedLegalDocByType(
+      type as LegalDocType,
+    );
   }
 
   @Get('public/legal-docs/slug/:slug')

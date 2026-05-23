@@ -1,4 +1,11 @@
-import { IsEmail, IsNotEmpty, IsString, IsEnum, IsBoolean, IsOptional } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsString,
+  IsEnum,
+  IsBoolean,
+  IsOptional,
+} from 'class-validator';
 import { UserRole } from '@prisma/client';
 import { IsStrongPassword } from '../../common/validators/password-strength.validator';
 

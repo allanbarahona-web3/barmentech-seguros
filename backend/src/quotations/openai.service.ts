@@ -35,7 +35,9 @@ export class OpenAIService {
     }
   }
 
-  async extractDataFromPdfBuffer(pdfBuffer: Buffer): Promise<ExtractedCoverageData> {
+  async extractDataFromPdfBuffer(
+    pdfBuffer: Buffer,
+  ): Promise<ExtractedCoverageData> {
     try {
       const base64Pdf = pdfBuffer.toString('base64');
 

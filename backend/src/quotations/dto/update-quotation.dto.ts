@@ -1,4 +1,10 @@
-import { IsString, IsArray, IsOptional, IsDateString, IsEnum } from 'class-validator';
+import {
+  IsString,
+  IsArray,
+  IsOptional,
+  IsDateString,
+  IsEnum,
+} from 'class-validator';
 import { QuotationStatus } from '@prisma/client';
 
 export class UpdateQuotationDto {

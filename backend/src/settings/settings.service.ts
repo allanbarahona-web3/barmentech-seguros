@@ -25,7 +25,12 @@ export interface PhoneNumber {
 export interface ContactRouteResult {
   whatsappUrl: string | null;
   phone: string | null;
-  matchedBy: 'americas-primary' | 'europe' | 'fallback-primary' | 'fallback-first' | 'none';
+  matchedBy:
+    | 'americas-primary'
+    | 'europe'
+    | 'fallback-primary'
+    | 'fallback-first'
+    | 'none';
   detectedCountry: string | null;
 }
 
@@ -128,15 +133,116 @@ export class SettingsService {
   ];
 
   private static readonly EUROPE_ISO_CODES = new Set([
-    'AL', 'AD', 'AM', 'AT', 'AZ', 'BA', 'BE', 'BG', 'BY', 'CH', 'CY', 'CZ', 'DE', 'DK', 'EE', 'ES', 'FI', 'FO', 'FR',
-    'GB', 'GE', 'GI', 'GR', 'HR', 'HU', 'IE', 'IS', 'IT', 'LI', 'LT', 'LU', 'LV', 'MC', 'MD', 'ME', 'MK', 'MT', 'NL',
-    'NO', 'PL', 'PT', 'RO', 'RS', 'RU', 'SE', 'SI', 'SK', 'SM', 'TR', 'UA', 'UK', 'VA',
+    'AL',
+    'AD',
+    'AM',
+    'AT',
+    'AZ',
+    'BA',
+    'BE',
+    'BG',
+    'BY',
+    'CH',
+    'CY',
+    'CZ',
+    'DE',
+    'DK',
+    'EE',
+    'ES',
+    'FI',
+    'FO',
+    'FR',
+    'GB',
+    'GE',
+    'GI',
+    'GR',
+    'HR',
+    'HU',
+    'IE',
+    'IS',
+    'IT',
+    'LI',
+    'LT',
+    'LU',
+    'LV',
+    'MC',
+    'MD',
+    'ME',
+    'MK',
+    'MT',
+    'NL',
+    'NO',
+    'PL',
+    'PT',
+    'RO',
+    'RS',
+    'RU',
+    'SE',
+    'SI',
+    'SK',
+    'SM',
+    'TR',
+    'UA',
+    'UK',
+    'VA',
   ]);
 
   private static readonly AMERICAS_ISO_CODES = new Set([
-    'AG', 'AI', 'AR', 'AW', 'BB', 'BL', 'BM', 'BO', 'BQ', 'BR', 'BS', 'BZ', 'CA', 'CL', 'CO', 'CR', 'CU', 'CW', 'DM',
-    'DO', 'EC', 'FK', 'GD', 'GF', 'GL', 'GP', 'GT', 'GY', 'HN', 'HT', 'JM', 'KN', 'KY', 'LC', 'MF', 'MQ', 'MS', 'MX',
-    'NI', 'PA', 'PE', 'PM', 'PR', 'PY', 'SR', 'SV', 'SX', 'TC', 'TT', 'US', 'UY', 'VC', 'VE', 'VG', 'VI',
+    'AG',
+    'AI',
+    'AR',
+    'AW',
+    'BB',
+    'BL',
+    'BM',
+    'BO',
+    'BQ',
+    'BR',
+    'BS',
+    'BZ',
+    'CA',
+    'CL',
+    'CO',
+    'CR',
+    'CU',
+    'CW',
+    'DM',
+    'DO',
+    'EC',
+    'FK',
+    'GD',
+    'GF',
+    'GL',
+    'GP',
+    'GT',
+    'GY',
+    'HN',
+    'HT',
+    'JM',
+    'KN',
+    'KY',
+    'LC',
+    'MF',
+    'MQ',
+    'MS',
+    'MX',
+    'NI',
+    'PA',
+    'PE',
+    'PM',
+    'PR',
+    'PY',
+    'SR',
+    'SV',
+    'SX',
+    'TC',
+    'TT',
+    'US',
+    'UY',
+    'VC',
+    'VE',
+    'VG',
+    'VI',
   ]);
 
   private normalizeText(value: string): string {
@@ -233,7 +339,9 @@ export class SettingsService {
   }
 
   private markdownToHtml(markdown: string): string {
-    const normalized = String(markdown || '').replace(/\r\n/g, '\n').trim();
+    const normalized = String(markdown || '')
+      .replace(/\r\n/g, '\n')
+      .trim();
     if (!normalized) {
       return '';
     }
@@ -296,11 +404,44 @@ export class SettingsService {
     }
 
     const europeanNames = [
-      'europa', 'europe', 'espana', 'francia', 'alemania', 'italia', 'portugal', 'reino unido',
-      'united kingdom', 'uk', 'paises bajos', 'belgica', 'suiza', 'austria', 'suecia', 'noruega',
-      'dinamarca', 'finlandia', 'irlanda', 'polonia', 'grecia', 'republica checa', 'hungri',
-      'rumania', 'ucrania', 'rusia', 'serbia', 'croacia', 'eslovaquia', 'eslovenia', 'lituania',
-      'letonia', 'estonia', 'islandia', 'malta', 'luxemburgo', 'andorra', 'monaco',
+      'europa',
+      'europe',
+      'espana',
+      'francia',
+      'alemania',
+      'italia',
+      'portugal',
+      'reino unido',
+      'united kingdom',
+      'uk',
+      'paises bajos',
+      'belgica',
+      'suiza',
+      'austria',
+      'suecia',
+      'noruega',
+      'dinamarca',
+      'finlandia',
+      'irlanda',
+      'polonia',
+      'grecia',
+      'republica checa',
+      'hungri',
+      'rumania',
+      'ucrania',
+      'rusia',
+      'serbia',
+      'croacia',
+      'eslovaquia',
+      'eslovenia',
+      'lituania',
+      'letonia',
+      'estonia',
+      'islandia',
+      'malta',
+      'luxemburgo',
+      'andorra',
+      'monaco',
     ];
 
     return europeanNames.some((name) => normalized.includes(name));
@@ -316,12 +457,16 @@ export class SettingsService {
   }
 
   private pickEuropePhone(phones: PhoneNumber[]): PhoneNumber | null {
-    const byRegion = phones.find((p) => this.normalizeText(p.regionGroup || '') === 'europe');
+    const byRegion = phones.find(
+      (p) => this.normalizeText(p.regionGroup || '') === 'europe',
+    );
     if (byRegion) {
       return byRegion;
     }
 
-    const byCountryName = phones.find((p) => this.isEuropeByCountryName(p.country));
+    const byCountryName = phones.find((p) =>
+      this.isEuropeByCountryName(p.country),
+    );
     if (byCountryName) {
       return byCountryName;
     }
@@ -329,7 +474,9 @@ export class SettingsService {
     return null;
   }
 
-  async resolveWhatsAppRoute(detectedCountry: string | null): Promise<ContactRouteResult> {
+  async resolveWhatsAppRoute(
+    detectedCountry: string | null,
+  ): Promise<ContactRouteResult> {
     const settings = await this.getSettings();
     const rawPhones = ((settings.phoneNumbers || []) as any[]) || [];
     const phones = rawPhones
@@ -337,7 +484,8 @@ export class SettingsService {
         country: String(p?.country || ''),
         phone: String(p?.phone || ''),
         isPrimary: p?.isPrimary === true,
-        regionGroup: typeof p?.regionGroup === 'string' ? p.regionGroup : undefined,
+        regionGroup:
+          typeof p?.regionGroup === 'string' ? p.regionGroup : undefined,
         language: typeof p?.language === 'string' ? p.language : undefined,
         label: typeof p?.label === 'string' ? p.label : undefined,
       }))
@@ -347,7 +495,11 @@ export class SettingsService {
     const europePhone = this.pickEuropePhone(phones);
     const countryCode = (detectedCountry || '').trim().toUpperCase();
 
-    if (countryCode && SettingsService.AMERICAS_ISO_CODES.has(countryCode) && primaryPhone) {
+    if (
+      countryCode &&
+      SettingsService.AMERICAS_ISO_CODES.has(countryCode) &&
+      primaryPhone
+    ) {
       return {
         whatsappUrl: this.buildWhatsAppUrl(primaryPhone.phone),
         phone: this.sanitizePhone(primaryPhone.phone),
@@ -356,7 +508,11 @@ export class SettingsService {
       };
     }
 
-    if (countryCode && SettingsService.EUROPE_ISO_CODES.has(countryCode) && europePhone) {
+    if (
+      countryCode &&
+      SettingsService.EUROPE_ISO_CODES.has(countryCode) &&
+      europePhone
+    ) {
       return {
         whatsappUrl: this.buildWhatsAppUrl(europePhone.phone),
         phone: this.sanitizePhone(europePhone.phone),
@@ -383,11 +539,15 @@ export class SettingsService {
       };
     }
 
-    const socialWhatsapp = this.buildWhatsAppUrl((settings.socialMedia as SocialMedia | null)?.whatsapp);
+    const socialWhatsapp = this.buildWhatsAppUrl(
+      (settings.socialMedia as SocialMedia | null)?.whatsapp,
+    );
     if (socialWhatsapp) {
       return {
         whatsappUrl: socialWhatsapp,
-        phone: this.sanitizePhone((settings.socialMedia as SocialMedia | null)?.whatsapp),
+        phone: this.sanitizePhone(
+          (settings.socialMedia as SocialMedia | null)?.whatsapp,
+        ),
         matchedBy: 'fallback-first',
         detectedCountry: countryCode || null,
       };
@@ -431,7 +591,7 @@ export class SettingsService {
 
   async updateSettings(data: UpdateSettingsDto) {
     const existing = await this.getSettings();
-    
+
     // Convertir tipos correctamente para Prisma
     const updateData: any = { ...data };
     if (data.phoneNumbers) {
@@ -441,8 +601,14 @@ export class SettingsService {
       updateData.socialMedia = data.socialMedia as any;
     }
     if (data.pageHeroes) {
-      const existingPageHeroes = (existing.pageHeroes || {}) as Record<string, PageHeroConfig>;
-      const incomingPageHeroes = data.pageHeroes as Record<string, PageHeroConfig>;
+      const existingPageHeroes = (existing.pageHeroes || {}) as Record<
+        string,
+        PageHeroConfig
+      >;
+      const incomingPageHeroes = data.pageHeroes as Record<
+        string,
+        PageHeroConfig
+      >;
       const mergedPageHeroes: Record<string, PageHeroConfig> = {
         ...existingPageHeroes,
       };
@@ -456,7 +622,7 @@ export class SettingsService {
 
       updateData.pageHeroes = mergedPageHeroes as any;
     }
-    
+
     return this.prisma.companySettings.update({
       where: { id: existing.id },
       data: updateData,
@@ -481,11 +647,16 @@ export class SettingsService {
         country: String(phone.country || '').trim(),
         phone: String(phone.phone || '').trim(),
         isPrimary: phone.isPrimary === true,
-        regionGroup: phone.regionGroup ? String(phone.regionGroup).trim() : undefined,
+        regionGroup: phone.regionGroup
+          ? String(phone.regionGroup).trim()
+          : undefined,
       }))
       .filter((phone) => phone.phone !== '');
 
-    if (normalizedPhones.length > 0 && !normalizedPhones.some((phone) => phone.isPrimary)) {
+    if (
+      normalizedPhones.length > 0 &&
+      !normalizedPhones.some((phone) => phone.isPrimary)
+    ) {
       normalizedPhones[0].isPrimary = true;
     }
 
@@ -509,13 +680,19 @@ export class SettingsService {
   // Helper para obtener un teléfono específico por país
   async getPhoneByCountry(country: string): Promise<PhoneNumber | null> {
     const settings = await this.getSettings();
-    const phones = (settings.phoneNumbers as any) as PhoneNumber[];
-    return phones.find(p => p.country.toLowerCase() === country.toLowerCase()) || null;
+    const phones = settings.phoneNumbers as any as PhoneNumber[];
+    return (
+      phones.find((p) => p.country.toLowerCase() === country.toLowerCase()) ||
+      null
+    );
   }
 
   async updatePageHero(pageKey: string, patch: Partial<PageHeroConfig>) {
     const settings = await this.getSettings();
-    const currentPageHeroes = (settings.pageHeroes || {}) as Record<string, PageHeroConfig>;
+    const currentPageHeroes = (settings.pageHeroes || {}) as Record<
+      string,
+      PageHeroConfig
+    >;
     const currentHero = currentPageHeroes[pageKey] || {};
 
     return this.prisma.companySettings.update({
@@ -543,7 +720,9 @@ export class SettingsService {
     });
   }
 
-  async getPublishedLegalDocByType(type: LegalDocType): Promise<LegalDocument | null> {
+  async getPublishedLegalDocByType(
+    type: LegalDocType,
+  ): Promise<LegalDocument | null> {
     const settings = await this.getSettings();
     const docs = this.getLegalDocsFromSettings(settings);
 
@@ -554,13 +733,19 @@ export class SettingsService {
     return published[0] || null;
   }
 
-  async getPublishedLegalDocBySlug(slug: string): Promise<LegalDocument | null> {
+  async getPublishedLegalDocBySlug(
+    slug: string,
+  ): Promise<LegalDocument | null> {
     const normalizedSlug = this.sanitizeSlug(slug);
     const settings = await this.getSettings();
     const docs = this.getLegalDocsFromSettings(settings);
 
     const published = docs
-      .filter((doc) => this.sanitizeSlug(doc.slug) === normalizedSlug && doc.status === 'published')
+      .filter(
+        (doc) =>
+          this.sanitizeSlug(doc.slug) === normalizedSlug &&
+          doc.status === 'published',
+      )
       .sort((a, b) => b.version - a.version);
 
     return published[0] || null;
@@ -572,7 +757,8 @@ export class SettingsService {
     const nowIso = new Date().toISOString();
     const type = this.ensureLegalDocType(payload.type);
 
-    const normalizedTitle = String(payload.title || '').trim() || this.buildDefaultTitle(type);
+    const normalizedTitle =
+      String(payload.title || '').trim() || this.buildDefaultTitle(type);
     const normalizedSlug =
       this.sanitizeSlug(payload.slug) || this.buildDefaultSlug(type);
     const sanitizedHtml = this.sanitizeLegalHtml(payload.contentHtml);
@@ -613,7 +799,7 @@ export class SettingsService {
         ...docs,
         {
           id: randomUUID(),
-          
+
           type,
           title: normalizedTitle,
           slug: normalizedSlug,
@@ -657,7 +843,7 @@ export class SettingsService {
       if (doc.id === id) {
         return {
           ...doc,
-          status: 'published' as LegalDocStatus,
+          status: 'published',
           publishedAt: nowIso,
           updatedBy: actorUserId || null,
           updatedAt: nowIso,
@@ -667,7 +853,7 @@ export class SettingsService {
       if (doc.status === 'published') {
         return {
           ...doc,
-          status: 'archived' as LegalDocStatus,
+          status: 'archived',
           updatedBy: actorUserId || null,
           updatedAt: nowIso,
         };
@@ -700,7 +886,7 @@ export class SettingsService {
       found = true;
       return {
         ...doc,
-        status: 'archived' as LegalDocStatus,
+        status: 'archived',
         updatedBy: actorUserId || null,
         updatedAt: nowIso,
       };
@@ -784,7 +970,7 @@ export class SettingsService {
         if (doc.type === type && doc.status === 'published') {
           return {
             ...doc,
-            status: 'archived' as LegalDocStatus,
+            status: 'archived',
             updatedBy: actorUserId || null,
             updatedAt: nowIso,
           };

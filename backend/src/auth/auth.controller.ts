@@ -1,4 +1,13 @@
-import { Controller, Post, Body, Get, UseGuards, Request, Ip, Param } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  UseGuards,
+  Request,
+  Ip,
+  Param,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto, RegisterDto } from './dto';
 import { ActivateAccountDto } from './dto/activate-account.dto';
@@ -40,7 +49,7 @@ export class AuthController {
   @SkipThrottle()
   @UseGuards(JwtAuthGuard)
   @Get('me')
-  async getProfile(@Request() req) {
+  getProfile(@Request() req) {
     return req.user;
   }
 }

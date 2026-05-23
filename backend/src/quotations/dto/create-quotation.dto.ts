@@ -1,4 +1,11 @@
-import { IsNotEmpty, IsString, IsArray, IsOptional, IsDateString, IsUUID } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsArray,
+  IsOptional,
+  IsDateString,
+  IsUUID,
+} from 'class-validator';
 
 export class CreateQuotationDto {
   @IsUUID('4', { message: 'ID de creador inválido' })

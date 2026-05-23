@@ -1,7 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { QuoteLeadStatus } from '@prisma/client';
-import { CreateQuoteLeadDto, UpdateQuoteLeadDto, FilterQuoteLeadsDto } from './dto';
+import {
+  CreateQuoteLeadDto,
+  UpdateQuoteLeadDto,
+  FilterQuoteLeadsDto,
+} from './dto';
 
 @Injectable()
 export class QuoteLeadsService {
@@ -63,10 +67,7 @@ export class QuoteLeadsService {
       };
       where.wantsEmailQuote = true;
     } else if (filters.hasEmail === 'false') {
-      where.OR = [
-        { email: null },
-        { wantsEmailQuote: false },
-      ];
+      where.OR = [{ email: null }, { wantsEmailQuote: false }];
     }
 
     const [leads, total] = await Promise.all([
@@ -172,13 +173,20 @@ export class QuoteLeadsService {
   }
 
   async getStats() {
-    const [total, newLeads, contacted, converted, discarded] = await Promise.all([
-      this.prisma.quoteLead.count(),
-      this.prisma.quoteLead.count({ where: { status: QuoteLeadStatus.NEW } }),
-      this.prisma.quoteLead.count({ where: { status: QuoteLeadStatus.CONTACTED } }),
-      this.prisma.quoteLead.count({ where: { status: QuoteLeadStatus.CONVERTED } }),
-      this.prisma.quoteLead.count({ where: { status: QuoteLeadStatus.DISCARDED } }),
-    ]);
+    const [total, newLeads, contacted, converted, discarded] =
+      await Promise.all([
+        this.prisma.quoteLead.count(),
+        this.prisma.quoteLead.count({ where: { status: QuoteLeadStatus.NEW } }),
+        this.prisma.quoteLead.count({
+          where: { status: QuoteLeadStatus.CONTACTED },
+        }),
+        this.prisma.quoteLead.count({
+          where: { status: QuoteLeadStatus.CONVERTED },
+        }),
+        this.prisma.quoteLead.count({
+          where: { status: QuoteLeadStatus.DISCARDED },
+        }),
+      ]);
 
     return {
       total,

@@ -1,4 +1,9 @@
-import { Injectable, ConflictException, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { UserRole } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
@@ -83,7 +88,7 @@ export class UsersService {
 
   async update(id: string, data: UpdateUserDto) {
     const user = await this.prisma.user.findUnique({ where: { id } });
-    
+
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -105,7 +110,7 @@ export class UsersService {
 
   async remove(id: string) {
     const user = await this.prisma.user.findUnique({ where: { id } });
-    
+
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -130,7 +135,7 @@ export class UsersService {
   async validatePassword(email: string, password: string): Promise<boolean> {
     const user = await this.findByEmail(email);
     if (!user || !user.password) return false;
-    
+
     return bcrypt.compare(password, user.password);
   }
 
