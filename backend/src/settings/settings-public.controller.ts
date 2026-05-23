@@ -26,6 +26,7 @@ export class SettingsPublicController {
       phoneNumbers: settings.phoneNumbers,
       socialMedia: settings.socialMedia,
       businessAddress: settings.businessAddress,
+      pageHeroes: settings.pageHeroes,
     };
   }
 

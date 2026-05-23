@@ -11,6 +11,17 @@ export interface PublicSocialMedia {
   whatsapp?: string;
 }
 
+export interface PageHeroConfig {
+  imageUrl?: string;
+  title?: string;
+  subtitle?: string;
+  ctaText?: string;
+  ctaUrl?: string;
+  ctaAction?: 'link' | 'geo-whatsapp';
+  textColor?: string;
+  overlayOpacity?: number;
+}
+
 export interface PublicCompanySettings {
   companyName?: string;
   logoUrl?: string;
@@ -20,6 +31,7 @@ export interface PublicCompanySettings {
   phoneNumbers?: PublicPhoneNumber[];
   socialMedia?: PublicSocialMedia;
   businessAddress?: string;
+  pageHeroes?: Record<string, PageHeroConfig>;
 }
 
 export type PublicLegalDocType =

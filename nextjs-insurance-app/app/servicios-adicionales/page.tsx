@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { apiClient } from '@/lib/api/client';
+import { getPublicCompanySettings, PublicCompanySettings } from '@/lib/api/public-settings';
 
 interface CoverageLevel {
   name: string;
@@ -48,10 +49,17 @@ export default function ServiciosAdicionalesPage() {
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedService, setSelectedService] = useState<AdditionalService | null>(null);
+  const [settings, setSettings] = useState<PublicCompanySettings | null>(null);
 
   useEffect(() => {
+    loadSettings();
     fetchData();
   }, [selectedCategory]);
+
+  const loadSettings = async () => {
+    const companySettings = await getPublicCompanySettings();
+    setSettings(companySettings);
+  };
 
   const fetchData = async () => {
     try {
@@ -90,19 +98,67 @@ export default function ServiciosAdicionalesPage() {
     );
   }
 
+  const heroConfig = settings?.pageHeroes?.['additional-services'];
+  const hasCustomHero = heroConfig && heroConfig.imageUrl;
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white pt-24 pb-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Servicios Adicionales
-          </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Protege tu viaje con coberturas adicionales diseñadas para cada necesidad. 
-            Personaliza tu seguro y viaja con total tranquilidad.
-          </p>
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+      {/* Hero Section */}
+      {hasCustomHero ? (
+        <section
+          className="relative min-h-[400px] flex items-center justify-center pt-24 pb-12"
+          style={{
+            backgroundImage: `url(${heroConfig.imageUrl})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+        >
+          <div
+            className="absolute inset-0 bg-black"
+            style={{ opacity: heroConfig.overlayOpacity ?? 0.5 }}
+          ></div>
+          <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
+            <h1
+              className="text-4xl md:text-5xl font-bold mb-4"
+              style={{ color: heroConfig.textColor || '#ffffff' }}
+            >
+              {heroConfig.title || 'Servicios Adicionales'}
+            </h1>
+            <p
+              className="text-xl mb-8 max-w-3xl mx-auto"
+              style={{ color: heroConfig.textColor || '#ffffff', opacity: 0.9 }}
+            >
+              {heroConfig.subtitle || 'Protege tu viaje con coberturas adicionales diseñadas para cada necesidad.'}
+            </p>
+            {heroConfig.ctaText && heroConfig.ctaUrl && (
+              <a
+                href={heroConfig.ctaUrl}
+                target={heroConfig.ctaAction === 'link' ? '_self' : '_blank'}
+                rel="noopener noreferrer"
+                className="inline-block bg-emerald-500 text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-emerald-600 transition-all shadow-lg"
+              >
+                {heroConfig.ctaText}
+              </a>
+            )}
+          </div>
+        </section>
+      ) : (
+        <div className="pt-24 pb-12">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+                Servicios Adicionales
+              </h1>
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                Protege tu viaje con coberturas adicionales diseñadas para cada necesidad. 
+                Personaliza tu seguro y viaja con total tranquilidad.
+              </p>
+            </div>
+          </div>
         </div>
+      )}
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
 
         {/* Category Filters */}
         <div className="flex flex-wrap justify-center gap-3 mb-12">

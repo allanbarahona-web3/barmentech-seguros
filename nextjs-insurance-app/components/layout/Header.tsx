@@ -64,10 +64,10 @@ export default function Header() {
             Coberturas
           </Link>
           <Link 
-            href="/plans" 
+            href="/#sabias-que" 
             className="text-slate-600 hover:text-blue-900 transition-colors font-manrope text-sm font-semibold tracking-tight"
           >
-            Planes
+            Sabías que
           </Link>
           <Link 
             href="/servicios-adicionales" 
@@ -80,12 +80,6 @@ export default function Header() {
             className="text-slate-600 hover:text-blue-900 transition-colors font-manrope text-sm font-semibold tracking-tight"
           >
             Cotizar
-          </Link>
-          <Link 
-            href="/#preguntas" 
-            className="text-slate-600 hover:text-blue-900 transition-colors font-manrope text-sm font-semibold tracking-tight"
-          >
-            Preguntas
           </Link>
           <Link 
             href="/support" 
@@ -155,10 +149,9 @@ export default function Header() {
           <div className="flex flex-col gap-4 p-6">
             <Link href="/" className="text-blue-900 font-manrope font-semibold">Inicio</Link>
             <Link href="/#coberturas" className="text-slate-600 font-manrope">Coberturas</Link>
-            <Link href="/plans" className="text-slate-600 font-manrope">Planes</Link>
+            <Link href="/#sabias-que" className="text-slate-600 font-manrope">Sabías que</Link>
             <Link href="/servicios-adicionales" className="text-slate-600 font-manrope">Servicios Adicionales</Link>
             <Link href="/#cotizar" className="text-slate-600 font-manrope">Cotizar</Link>
-            <Link href="/#preguntas" className="text-slate-600 font-manrope">Preguntas</Link>
             <Link href="/support" className="text-slate-600 font-manrope">Contacto</Link>
             
             {/* Auth buttons for mobile */}
