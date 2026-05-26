@@ -56,6 +56,15 @@ export default function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
   const [resolvingContact, setResolvingContact] = useState(false);
 
+  const openWhatsAppTarget = (url: string, popup: Window | null) => {
+    if (popup) {
+      popup.location.href = url;
+      return;
+    }
+
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
+
   const faqs = [
     {
       question: "¿Con cuanto tiempo de anticipacion debo adquirir mi seguro de viaje?",
@@ -90,17 +99,26 @@ export default function FAQ() {
   ];
 
   const handleLearnMore = async () => {
+    const popup = window.open("", "_blank", "noopener,noreferrer");
+
     try {
       setResolvingContact(true);
-      const response = await apiClient.get<ContactRouteResponse>(
-        "/settings/public/contact-route",
-      );
-      const resolved = response.data?.route?.whatsappUrl;
+      try {
+        const response = await apiClient.get<ContactRouteResponse>(
+          "/settings/public/contact-route",
+        );
+        const resolved = response.data?.route?.whatsappUrl;
 
-      if (resolved) {
-        const urlWithMessage = withWhatsAppMessage(resolved, FAQ_WHATSAPP_PRE_MESSAGE);
-        window.open(urlWithMessage, "_blank", "noopener,noreferrer");
-        return;
+        if (resolved) {
+          const urlWithMessage = withWhatsAppMessage(
+            resolved,
+            FAQ_WHATSAPP_PRE_MESSAGE,
+          );
+          openWhatsAppTarget(urlWithMessage, popup);
+          return;
+        }
+      } catch (error) {
+        console.error("Error resolving geo WhatsApp route from FAQ:", error);
       }
 
       const settingsResponse = await apiClient.get<PublicSettingsResponse>("/settings/public");
@@ -113,10 +131,13 @@ export default function FAQ() {
           fallbackWhatsApp,
           FAQ_WHATSAPP_PRE_MESSAGE,
         );
-        window.open(urlWithMessage, "_blank", "noopener,noreferrer");
+        openWhatsAppTarget(urlWithMessage, popup);
         return;
       }
+
+      popup?.close();
     } catch (error) {
+      popup?.close();
       console.error("Error resolving WhatsApp contact from FAQ:", error);
     } finally {
       setResolvingContact(false);

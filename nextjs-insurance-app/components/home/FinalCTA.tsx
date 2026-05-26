@@ -56,18 +56,36 @@ function normalizeWhatsAppUrl(rawValue?: string | null): string | null {
 export default function FinalCTA() {
   const [contactingAdvisor, setContactingAdvisor] = useState(false);
 
+  const openWhatsAppTarget = (url: string, popup: Window | null) => {
+    if (popup) {
+      popup.location.href = url;
+      return;
+    }
+
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
+
   const handleContactAdvisor = async () => {
+    const popup = window.open("", "_blank", "noopener,noreferrer");
+
     try {
       setContactingAdvisor(true);
-      const response = await apiClient.get<ContactRouteResponse>(
-        "/settings/public/contact-route",
-      );
-      const resolved = response.data?.route?.whatsappUrl;
+      try {
+        const response = await apiClient.get<ContactRouteResponse>(
+          "/settings/public/contact-route",
+        );
+        const resolved = response.data?.route?.whatsappUrl;
 
-      if (resolved) {
-        const urlWithMessage = withWhatsAppMessage(resolved, ADVISOR_WHATSAPP_MESSAGE);
-        window.open(urlWithMessage, "_blank", "noopener,noreferrer");
-        return;
+        if (resolved) {
+          const urlWithMessage = withWhatsAppMessage(
+            resolved,
+            ADVISOR_WHATSAPP_MESSAGE,
+          );
+          openWhatsAppTarget(urlWithMessage, popup);
+          return;
+        }
+      } catch (error) {
+        console.error("Error resolving geo WhatsApp route from FinalCTA:", error);
       }
 
       const settingsResponse = await apiClient.get<PublicSettingsResponse>("/settings/public");
@@ -80,10 +98,13 @@ export default function FinalCTA() {
           fallbackWhatsApp,
           ADVISOR_WHATSAPP_MESSAGE,
         );
-        window.open(urlWithMessage, "_blank", "noopener,noreferrer");
+        openWhatsAppTarget(urlWithMessage, popup);
         return;
       }
+
+      popup?.close();
     } catch (error) {
+      popup?.close();
       console.error("Error resolving WhatsApp contact from FinalCTA:", error);
     } finally {
       setContactingAdvisor(false);
