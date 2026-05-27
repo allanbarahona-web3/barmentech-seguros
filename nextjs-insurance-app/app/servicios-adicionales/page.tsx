@@ -103,7 +103,7 @@ export default function ServiciosAdicionalesPage() {
   }
 
   const heroConfig = settings?.pageHeroes?.['additional-services'];
-  const hasCustomHero = heroConfig && heroConfig.imageUrl;
+  const heroImageUrl = heroConfig?.imageUrl || '/adventure_sports_hero.webp';
 
   // Build CTA URL for geo-whatsapp action
   const getCtaHref = () => {
@@ -129,59 +129,43 @@ export default function ServiciosAdicionalesPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
       {/* Hero Section */}
-      {hasCustomHero ? (
-        <section
-          className="relative min-h-[400px] flex items-center justify-center pt-24 pb-12"
-          style={{
-            backgroundImage: `url(${heroConfig.imageUrl})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
-        >
-          <div
-            className="absolute inset-0 bg-black"
-            style={{ opacity: heroConfig.overlayOpacity ?? 0.5 }}
-          ></div>
-          <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
-            <h1
-              className="text-4xl md:text-5xl font-bold mb-4"
-              style={{ color: heroConfig.textColor || '#ffffff' }}
+      <section
+        className="relative min-h-[400px] flex items-center justify-center pt-24 pb-12"
+        style={{
+          backgroundImage: `url(${heroImageUrl})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      >
+        <div
+          className="absolute inset-0 bg-black"
+          style={{ opacity: heroConfig?.overlayOpacity ?? 0.5 }}
+        ></div>
+        <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
+          <h1
+            className="text-4xl md:text-5xl font-bold mb-4"
+            style={{ color: heroConfig?.textColor || '#ffffff' }}
+          >
+            {heroConfig?.title || 'Servicios Adicionales'}
+          </h1>
+          <p
+            className="text-xl mb-8 max-w-3xl mx-auto"
+            style={{ color: heroConfig?.textColor || '#ffffff', opacity: 0.9 }}
+          >
+            {heroConfig?.subtitle || 'Protege tu viaje con coberturas adicionales diseñadas para cada necesidad.'}
+          </p>
+          {heroConfig?.ctaText && (
+            <a
+              href={getCtaHref()}
+              target={getCtaTarget()}
+              rel="noopener noreferrer"
+              className="inline-block bg-emerald-500 text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-emerald-600 transition-all shadow-lg"
             >
-              {heroConfig.title || 'Servicios Adicionales'}
-            </h1>
-            <p
-              className="text-xl mb-8 max-w-3xl mx-auto"
-              style={{ color: heroConfig.textColor || '#ffffff', opacity: 0.9 }}
-            >
-              {heroConfig.subtitle || 'Protege tu viaje con coberturas adicionales diseñadas para cada necesidad.'}
-            </p>
-            {heroConfig.ctaText && (
-              <a
-                href={getCtaHref()}
-                target={getCtaTarget()}
-                rel="noopener noreferrer"
-                className="inline-block bg-emerald-500 text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-emerald-600 transition-all shadow-lg"
-              >
-                {heroConfig.ctaText}
-              </a>
-            )}
-          </div>
-        </section>
-      ) : (
-        <div className="pt-24 pb-12">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-                Servicios Adicionales
-              </h1>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                Protege tu viaje con coberturas adicionales diseñadas para cada necesidad. 
-                Personaliza tu seguro y viaja con total tranquilidad.
-              </p>
-            </div>
-          </div>
+              {heroConfig.ctaText}
+            </a>
+          )}
         </div>
-      )}
+      </section>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
 
