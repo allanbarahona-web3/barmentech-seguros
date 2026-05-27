@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { scrollToQuoteWidget } from "@/lib/scroll-to-quote";
 import FinalCTA from "@/components/home/FinalCTA";
+import ContactAdvisorButton from "@/components/common/ContactAdvisorButton";
 
 export const dynamic = "force-dynamic";
 
@@ -156,6 +157,9 @@ const FEATURES: Feature[] = [
   },
 ];
 
+const SUPPORT_ADVISOR_WHATSAPP_MESSAGE =
+  "Hola, necesito apoyo para elegir o gestionar mi seguro de viaje.";
+
 export default function SupportPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const faqRef = useRef<HTMLDivElement>(null);
@@ -199,15 +203,11 @@ export default function SupportPage() {
             Estamos aquí para ayudarte a elegir el plan perfecto, resolver dudas sobre tu póliza o asistirte con cualquier consulta antes y durante tu viaje.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href="https://wa.me/50670067572"
-              target="_blank"
-              rel="noreferrer"
-              className="bg-emerald-500 text-white hover:bg-emerald-600 px-10 py-4 rounded-lg font-bold text-lg transition-all shadow-lg inline-flex items-center justify-center gap-2"
-            >
-              <span className="material-symbols-outlined">chat</span>
-              <span>Hablar por WhatsApp</span>
-            </a>
+            <ContactAdvisorButton
+              message={SUPPORT_ADVISOR_WHATSAPP_MESSAGE}
+              className="bg-emerald-500 text-white hover:bg-emerald-600 px-10 py-4 rounded-lg font-bold text-lg transition-all shadow-lg inline-flex items-center justify-center gap-2 disabled:opacity-70"
+              showChatIcon
+            />
             <button
               onClick={scrollToQuoteWidget}
               className="bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 px-10 py-4 rounded-lg font-bold text-lg transition-all border-2 border-white/50 inline-flex items-center justify-center gap-2"
@@ -336,15 +336,11 @@ export default function SupportPage() {
               <p className="text-slate-600 mb-4">
                 ¿No encontraste lo que buscabas?
               </p>
-              <a
-                href="https://wa.me/50670067572"
-                target="_blank"
-                rel="noreferrer"
-                className="bg-emerald-500 text-white hover:bg-emerald-600 px-8 py-3 rounded-lg font-bold transition-all shadow-lg inline-flex items-center gap-2"
-              >
-                <span className="material-symbols-outlined">chat</span>
-                <span>Contactar un asesor</span>
-              </a>
+              <ContactAdvisorButton
+                message={SUPPORT_ADVISOR_WHATSAPP_MESSAGE}
+                className="bg-emerald-500 text-white hover:bg-emerald-600 px-8 py-3 rounded-lg font-bold transition-all shadow-lg inline-flex items-center gap-2 disabled:opacity-70"
+                showChatIcon
+              />
             </div>
           </div>
         </div>

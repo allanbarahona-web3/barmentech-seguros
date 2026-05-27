@@ -1,4 +1,5 @@
-import { BadRequestException, Controller, Get, Param } from '@nestjs/common';
+import { BadRequestException, Controller, Get, Param, Req } from '@nestjs/common';
+import type { Request } from 'express';
 import { SettingsService } from './settings.service';
 import { LegalDocType } from './dto';
 
@@ -12,6 +13,26 @@ const PUBLIC_LEGAL_DOC_TYPES: LegalDocType[] = [
 @Controller('settings')
 export class SettingsPublicController {
   constructor(private readonly settingsService: SettingsService) {}
+
+  @Get('public/contact-route')
+  async getPublicContactRoute(@Req() req: Request) {
+    const countryRaw =
+      req?.headers?.['x-vercel-ip-country'] ||
+      req?.headers?.['cf-ipcountry'] ||
+      req?.headers?.['cloudfront-viewer-country'] ||
+      req?.headers?.['x-country-code'];
+
+    const detectedCountry =
+      typeof countryRaw === 'string' && countryRaw.length === 2
+        ? countryRaw.toUpperCase()
+        : null;
+
+    const route = await this.settingsService.resolveWhatsAppRoute(
+      detectedCountry,
+    );
+
+    return { route };
+  }
 
   @Get('public')
   async getPublicSettings() {

@@ -2,6 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { apiClient } from "@/lib/api/client";
+import {
+  openWhatsAppTarget,
+  resolveAdvisorWhatsAppUrl,
+  withWhatsAppMessage,
+} from "@/lib/contact-advisor";
 
 interface QuotePayload {
   destination: string;
@@ -18,12 +23,6 @@ interface QuoteModalOpenDetail {
   startDate?: string;
   endDate?: string;
   totalTravelers?: number;
-}
-
-interface ContactRouteResponse {
-  route?: {
-    whatsappUrl: string | null;
-  };
 }
 
 interface RegisterLeadResponse {
@@ -68,20 +67,6 @@ function buildQuoteMessage(data: QuotePayload): string {
       ? `Email: ${data.email || "No especificado"}`
       : "Email: No aplica",
   ].join("\n");
-}
-
-function withWhatsAppMessage(rawUrl: string, message: string): string {
-  try {
-    const url = new URL(rawUrl);
-    const existingText = url.searchParams.get("text");
-    if (!existingText) {
-      url.searchParams.set("text", message);
-    }
-    return url.toString();
-  } catch {
-    const separator = rawUrl.includes("?") ? "&" : "?";
-    return `${rawUrl}${separator}text=${encodeURIComponent(message)}`;
-  }
 }
 
 export default function QuoteModalHost() {
@@ -134,6 +119,7 @@ export default function QuoteModalHost() {
 
   const handleContactAdvisor = async () => {
     const message = buildQuoteMessage(form);
+    const popup = window.open("", "_blank", "noopener,noreferrer");
 
     // Intentamos registrar el lead por correo interno sin bloquear el flujo de WhatsApp.
     try {
@@ -152,18 +138,18 @@ export default function QuoteModalHost() {
 
     try {
       setResolvingContact(true);
-      const response = await apiClient.get<ContactRouteResponse>(
-        "/settings/public/contact-route",
-      );
-      const resolved = response.data?.route?.whatsappUrl;
+      const resolved = await resolveAdvisorWhatsAppUrl(apiClient);
 
       if (resolved) {
         const withMessage = withWhatsAppMessage(resolved, message);
-        window.open(withMessage, "_blank", "noopener,noreferrer");
+        openWhatsAppTarget(withMessage, popup);
         setIsOpen(false);
         return;
       }
+
+      popup?.close();
     } catch (error) {
+      popup?.close();
       console.error("Error resolving quote contact route:", error);
     } finally {
       setResolvingContact(false);

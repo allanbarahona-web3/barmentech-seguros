@@ -1,69 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { apiClient } from "@/lib/api/client";
-
-interface ContactRouteResponse {
-  route?: {
-    whatsappUrl: string | null;
-  };
-}
-
-interface PublicSettingsResponse {
-  socialMedia?: {
-    whatsapp?: string;
-  };
-}
+import ContactAdvisorButton from "@/components/common/ContactAdvisorButton";
 
 const FAQ_WHATSAPP_PRE_MESSAGE =
   "Hola, quiero saber mas sobre coberturas, limites y restricciones de Assist Card para mi viaje.";
 
-function withWhatsAppMessage(rawUrl: string, message: string): string {
-  try {
-    const url = new URL(rawUrl);
-    const existingText = url.searchParams.get("text");
-
-    if (!existingText) {
-      url.searchParams.set("text", message);
-    }
-
-    return url.toString();
-  } catch {
-    const separator = rawUrl.includes("?") ? "&" : "?";
-    return `${rawUrl}${separator}text=${encodeURIComponent(message)}`;
-  }
-}
-
-function normalizeWhatsAppUrl(rawValue?: string | null): string | null {
-  if (!rawValue) {
-    return null;
-  }
-
-  const value = rawValue.trim();
-  if (!value) {
-    return null;
-  }
-
-  if (/^https?:\/\//i.test(value)) {
-    return value;
-  }
-
-  const digits = value.replace(/\D/g, "");
-  return digits ? `https://wa.me/${digits}` : null;
-}
-
 export default function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
-  const [resolvingContact, setResolvingContact] = useState(false);
-
-  const openWhatsAppTarget = (url: string, popup: Window | null) => {
-    if (popup) {
-      popup.location.href = url;
-      return;
-    }
-
-    window.open(url, "_blank", "noopener,noreferrer");
-  };
 
   const faqs = [
     {
@@ -97,52 +41,6 @@ export default function FAQ() {
         "Son adicionales con limites especificos de edad, semanas de gestacion y tipo de actividad deportiva. Siempre debes revisar alcances, topes y restricciones antes de emitir."
     }
   ];
-
-  const handleLearnMore = async () => {
-    const popup = window.open("", "_blank", "noopener,noreferrer");
-
-    try {
-      setResolvingContact(true);
-      try {
-        const response = await apiClient.get<ContactRouteResponse>(
-          "/settings/public/contact-route",
-        );
-        const resolved = response.data?.route?.whatsappUrl;
-
-        if (resolved) {
-          const urlWithMessage = withWhatsAppMessage(
-            resolved,
-            FAQ_WHATSAPP_PRE_MESSAGE,
-          );
-          openWhatsAppTarget(urlWithMessage, popup);
-          return;
-        }
-      } catch (error) {
-        console.error("Error resolving geo WhatsApp route from FAQ:", error);
-      }
-
-      const settingsResponse = await apiClient.get<PublicSettingsResponse>("/settings/public");
-      const fallbackWhatsApp = normalizeWhatsAppUrl(
-        settingsResponse.data?.socialMedia?.whatsapp,
-      );
-
-      if (fallbackWhatsApp) {
-        const urlWithMessage = withWhatsAppMessage(
-          fallbackWhatsApp,
-          FAQ_WHATSAPP_PRE_MESSAGE,
-        );
-        openWhatsAppTarget(urlWithMessage, popup);
-        return;
-      }
-
-      popup?.close();
-    } catch (error) {
-      popup?.close();
-      console.error("Error resolving WhatsApp contact from FAQ:", error);
-    } finally {
-      setResolvingContact(false);
-    }
-  };
 
   return (
     <section id="preguntas" className="py-24 bg-surface-dim/20">
@@ -189,15 +87,11 @@ export default function FAQ() {
           <p className="text-slate-600 mt-2 text-sm md:text-base">
             Nuestro equipo te orienta por WhatsApp para elegir la cobertura ideal con Assist Card.
           </p>
-          <button
-            type="button"
-            onClick={handleLearnMore}
-            disabled={resolvingContact}
+          <ContactAdvisorButton
+            message={FAQ_WHATSAPP_PRE_MESSAGE}
             className="mt-5 inline-flex items-center justify-center gap-2 rounded-xl bg-secondary px-6 py-3 text-white font-label-md hover:brightness-110 transition-all disabled:opacity-70"
-          >
-            {resolvingContact ? "Conectando..." : "Quiero saber mas"}
-            <span className="material-symbols-outlined">chat</span>
-          </button>
+            showChatIcon
+          />
         </div>
       </div>
     </section>

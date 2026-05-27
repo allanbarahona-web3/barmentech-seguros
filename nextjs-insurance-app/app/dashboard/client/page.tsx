@@ -9,110 +9,16 @@ import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { useAuth } from '@/contexts/AuthContext';
 import QuoteModalHost from '@/components/home/QuoteModalHost';
 import QuickQuoteWidget from '@/components/plans/QuickQuoteWidget';
-import { apiClient } from '@/lib/api/client';
-
-interface ContactRouteResponse {
-  route?: {
-    whatsappUrl: string | null;
-  };
-}
-
-interface PublicSettingsResponse {
-  socialMedia?: {
-    whatsapp?: string;
-  };
-}
+import ContactAdvisorButton from '@/components/common/ContactAdvisorButton';
 
 const DASHBOARD_ADVISOR_WHATSAPP_MESSAGE =
   'Hola, necesito asesoria sobre mi seguro de viaje. Vengo del dashboard de cliente.';
 
-function withWhatsAppMessage(rawUrl: string, message: string): string {
-  try {
-    const url = new URL(rawUrl);
-    const existingText = url.searchParams.get('text');
-
-    if (!existingText) {
-      url.searchParams.set('text', message);
-    }
-
-    return url.toString();
-  } catch {
-    const separator = rawUrl.includes('?') ? '&' : '?';
-    return `${rawUrl}${separator}text=${encodeURIComponent(message)}`;
-  }
-}
-
-function normalizeWhatsAppUrl(rawValue?: string | null): string | null {
-  if (!rawValue) {
-    return null;
-  }
-
-  const value = rawValue.trim();
-  if (!value) {
-    return null;
-  }
-
-  if (/^https?:\/\//i.test(value)) {
-    return value;
-  }
-
-  const digits = value.replace(/\D/g, '');
-  return digits ? `https://wa.me/${digits}` : null;
-}
-
 export default function ClientDashboard() {
   const { user } = useAuth();
-  const [resolvingContact, setResolvingContact] = useState(false);
 
   const scrollToQuoteWidget = () => {
     window.dispatchEvent(new CustomEvent('scroll-to-quote'));
-  };
-
-  const handleContactAgent = async () => {
-    try {
-      setResolvingContact(true);
-      // 1) Try geo-routed WhatsApp first
-      try {
-        const response = await apiClient.get<ContactRouteResponse>(
-          '/settings/public/contact-route',
-        );
-        const resolved = response.data?.route?.whatsappUrl;
-
-        if (resolved) {
-          const urlWithMessage = withWhatsAppMessage(
-            resolved,
-            DASHBOARD_ADVISOR_WHATSAPP_MESSAGE,
-          );
-          window.open(urlWithMessage, '_blank', 'noopener,noreferrer');
-          return;
-        }
-      } catch (error) {
-        console.error('Error resolving geo WhatsApp route from dashboard:', error);
-      }
-
-      // 2) Fallback to tenant-configured WhatsApp in public settings
-      try {
-        const settingsResponse = await apiClient.get<PublicSettingsResponse>('/settings/public');
-        const fallbackWhatsApp = normalizeWhatsAppUrl(
-          settingsResponse.data?.socialMedia?.whatsapp,
-        );
-
-        if (fallbackWhatsApp) {
-          const urlWithMessage = withWhatsAppMessage(
-            fallbackWhatsApp,
-            DASHBOARD_ADVISOR_WHATSAPP_MESSAGE,
-          );
-          window.open(urlWithMessage, '_blank', 'noopener,noreferrer');
-          return;
-        }
-      } catch (error) {
-        console.error('Error resolving fallback WhatsApp from dashboard:', error);
-      }
-    } catch (error) {
-      console.error('Error resolving WhatsApp contact from client dashboard:', error);
-    } finally {
-      setResolvingContact(false);
-    }
   };
 
   const stats = [
@@ -149,7 +55,7 @@ export default function ClientDashboard() {
     },
     {
       icon: 'support_agent',
-      title: 'Contactar Agente',
+      title: 'Hablar con un asesor',
       description: 'Habla con un experto sobre tus necesidades',
       href: '/support',
       color: 'green'
@@ -248,12 +154,9 @@ export default function ClientDashboard() {
 
                 if (index === 1) {
                   return (
-                    <button
+                    <div
                       key={index}
-                      type="button"
-                      onClick={handleContactAgent}
-                      disabled={resolvingContact}
-                      className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-lg transition-all hover:-translate-y-1 group text-left w-full disabled:opacity-70"
+                      className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-lg transition-all hover:-translate-y-1 group text-left w-full"
                     >
                       <div className={`w-12 h-12 rounded-lg bg-${action.color}-100 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
                         <span className={`material-symbols-outlined text-${action.color}-600 text-2xl`}>
@@ -262,11 +165,12 @@ export default function ClientDashboard() {
                       </div>
                       <h3 className="text-lg font-semibold text-gray-900 mb-2">{action.title}</h3>
                       <p className="text-sm text-gray-600">{action.description}</p>
-                      <div className="mt-4 flex items-center text-sm font-medium text-blue-600 group-hover:text-blue-700">
-                        {resolvingContact ? 'Conectando...' : 'Ir ahora'}
-                        <span className="material-symbols-outlined text-sm ml-1">arrow_forward</span>
-                      </div>
-                    </button>
+                      <ContactAdvisorButton
+                        message={DASHBOARD_ADVISOR_WHATSAPP_MESSAGE}
+                        className="mt-4 inline-flex items-center text-sm font-medium text-blue-600 group-hover:text-blue-700 disabled:opacity-70"
+                        label="Hablar con un asesor"
+                      />
+                    </div>
                   );
                 }
                 
@@ -351,15 +255,11 @@ export default function ClientDashboard() {
                   <span className="material-symbols-outlined">add_circle</span>
                   Ir al widget de cotizacion
                 </button>
-                <button
-                  type="button"
-                  onClick={handleContactAgent}
-                  disabled={resolvingContact}
+                <ContactAdvisorButton
+                  message={DASHBOARD_ADVISOR_WHATSAPP_MESSAGE}
                   className="px-6 py-3 bg-white border-2 border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition-colors inline-flex items-center justify-center gap-2 disabled:opacity-70"
-                >
-                  <span className="material-symbols-outlined">support_agent</span>
-                  {resolvingContact ? 'Conectando...' : 'Hablar con un Agente'}
-                </button>
+                  showChatIcon
+                />
               </div>
             </div>
           </div>
