@@ -103,7 +103,7 @@ export default function ServiciosAdicionalesPage() {
   }
 
   const heroConfig = settings?.pageHeroes?.['additional-services'];
-  const heroImageUrl = heroConfig?.imageUrl || '/adventure_sports_hero.webp';
+  const heroImageUrl = '/adventure_sports_hero.webp';
 
   // Build CTA URL for geo-whatsapp action
   const getCtaHref = () => {
